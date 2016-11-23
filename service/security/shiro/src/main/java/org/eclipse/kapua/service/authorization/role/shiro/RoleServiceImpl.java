@@ -20,6 +20,7 @@ import org.eclipse.kapua.commons.service.internal.AbstractKapuaService;
 import org.eclipse.kapua.commons.service.internal.ServiceDAO;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.locator.KapuaLocator;
+import org.eclipse.kapua.locator.KapuaProvider;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
@@ -38,6 +39,7 @@ import org.eclipse.kapua.service.authorization.shiro.AuthorizationEntityManagerF
  * @since 1.0
  *
  */
+@KapuaProvider
 public class RoleServiceImpl extends AbstractKapuaService implements RoleService {
 
     public RoleServiceImpl() {
@@ -46,7 +48,8 @@ public class RoleServiceImpl extends AbstractKapuaService implements RoleService
 
     @Override
     public Role create(RoleCreator roleCreator)
-            throws KapuaException {
+        throws KapuaException
+    {
         ArgumentValidator.notNull(roleCreator, "roleCreator");
         ArgumentValidator.notEmptyOrNull(roleCreator.getName(), "roleCreator.name");
         ArgumentValidator.notNull(roleCreator.getPermissions(), "roleCreator.permissions");
@@ -113,7 +116,8 @@ public class RoleServiceImpl extends AbstractKapuaService implements RoleService
 
     @Override
     public Role find(KapuaId scopeId, KapuaId roleId)
-            throws KapuaException {
+        throws KapuaException
+    {
         ArgumentValidator.notNull(scopeId, "accountId");
         ArgumentValidator.notNull(roleId, "roleId");
 
@@ -129,7 +133,8 @@ public class RoleServiceImpl extends AbstractKapuaService implements RoleService
 
     @Override
     public RoleListResult query(KapuaQuery<Role> query)
-            throws KapuaException {
+        throws KapuaException
+    {
         ArgumentValidator.notNull(query, "query");
         ArgumentValidator.notNull(query.getScopeId(), "query.scopeId");
 
@@ -145,7 +150,8 @@ public class RoleServiceImpl extends AbstractKapuaService implements RoleService
 
     @Override
     public long count(KapuaQuery<Role> query)
-            throws KapuaException {
+        throws KapuaException
+    {
         ArgumentValidator.notNull(query, "query");
         ArgumentValidator.notNull(query.getScopeId(), "query.scopeId");
 
