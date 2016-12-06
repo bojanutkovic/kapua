@@ -33,6 +33,7 @@ import org.eclipse.kapua.service.account.AccountCreator;
 import org.eclipse.kapua.service.account.AccountListResult;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
+import org.eclipse.kapua.service.authorization.domain.Domain;
 import org.eclipse.kapua.service.authorization.permission.Actions;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 
@@ -42,22 +43,22 @@ import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
  * @since 1.0
  *
  */
-public class AccountServiceImpl extends AbstractKapuaConfigurableService implements AccountService
-{
+public class AccountServiceImpl extends AbstractKapuaConfigurableService implements AccountService {
+
     private static final long serialVersionUID = -312489270279852500L;
+
+    private static final Domain accountDomain = new AccountDomain();
 
     /**
      * Constructor
      */
-    public AccountServiceImpl()
-    {
-        super(AccountService.class.getName(), AccountDomain.ACCOUNT, AccountEntityManagerFactory.getInstance());
+    public AccountServiceImpl() {
+        super(AccountService.class.getName(), accountDomain, AccountEntityManagerFactory.getInstance());
     }
 
     @Override
     public Account create(AccountCreator accountCreator)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Validation of the fields
         ArgumentValidator.notNull(accountCreator, "accountCreator");
@@ -75,7 +76,7 @@ public class AccountServiceImpl extends AbstractKapuaConfigurableService impleme
         KapuaLocator locator = KapuaLocator.getInstance();
         AuthorizationService authorizationService = locator.getService(AuthorizationService.class);
         PermissionFactory permissionFactory = locator.getFactory(PermissionFactory.class);
-        authorizationService.checkPermission(permissionFactory.newPermission(AccountDomain.ACCOUNT, Actions.write, accountCreator.getScopeId()));
+        authorizationService.checkPermission(permissionFactory.newPermission(accountDomain, Actions.write, accountCreator.getScopeId()));
 
         // Check if the parent account exists
         if (findById(accountCreator.getScopeId()) == null) {
@@ -95,8 +96,7 @@ public class AccountServiceImpl extends AbstractKapuaConfigurableService impleme
                 account = AccountDAO.update(em, account);
                 em.commit();
                 return account;
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 if (em != null) {
                     em.rollback();
                 }
@@ -107,8 +107,7 @@ public class AccountServiceImpl extends AbstractKapuaConfigurableService impleme
 
     @Override
     public Account update(Account account)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Validation of the fields
         ArgumentValidator.notNull(account.getId(), "id");
@@ -122,7 +121,7 @@ public class AccountServiceImpl extends AbstractKapuaConfigurableService impleme
         KapuaLocator locator = KapuaLocator.getInstance();
         AuthorizationService authorizationService = locator.getService(AuthorizationService.class);
         PermissionFactory permissionFactory = locator.getFactory(PermissionFactory.class);
-        authorizationService.checkPermission(permissionFactory.newPermission(AccountDomain.ACCOUNT, Actions.write, account.getScopeId()));
+        authorizationService.checkPermission(permissionFactory.newPermission(accountDomain, Actions.write, account.getScopeId()));
 
         return entityManagerSession.onTransactedResult(em -> {
             Account oldAccount = AccountDAO.find(em, account.getId());
@@ -149,8 +148,7 @@ public class AccountServiceImpl extends AbstractKapuaConfigurableService impleme
 
     @Override
     public void delete(KapuaId scopeId, KapuaId accountId)
-        throws KapuaException
-    {
+            throws KapuaException {
 
         //
         // Validation of the fields
@@ -163,7 +161,7 @@ public class AccountServiceImpl extends AbstractKapuaConfigurableService impleme
         KapuaLocator locator = KapuaLocator.getInstance();
         AuthorizationService authorizationService = locator.getService(AuthorizationService.class);
         PermissionFactory permissionFactory = locator.getFactory(PermissionFactory.class);
-        authorizationService.checkPermission(permissionFactory.newPermission(AccountDomain.ACCOUNT, action, scopeId));
+        authorizationService.checkPermission(permissionFactory.newPermission(accountDomain, action, scopeId));
 
         //
         // Check if it has children
@@ -194,8 +192,7 @@ public class AccountServiceImpl extends AbstractKapuaConfigurableService impleme
 
     @Override
     public Account find(KapuaId scopeId, KapuaId id)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Validation of the fields
         ArgumentValidator.notNull(scopeId, "scopeId");
@@ -208,7 +205,7 @@ public class AccountServiceImpl extends AbstractKapuaConfigurableService impleme
         KapuaLocator locator = KapuaLocator.getInstance();
         AuthorizationService authorizationService = locator.getService(AuthorizationService.class);
         PermissionFactory permissionFactory = locator.getFactory(PermissionFactory.class);
-        authorizationService.checkPermission(permissionFactory.newPermission(AccountDomain.ACCOUNT, Actions.read, scopeId));
+        authorizationService.checkPermission(permissionFactory.newPermission(accountDomain, Actions.read, scopeId));
 
         //
         // Make sure account exists
@@ -217,8 +214,7 @@ public class AccountServiceImpl extends AbstractKapuaConfigurableService impleme
 
     @Override
     public Account find(KapuaId id)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Validation of the fields
         ArgumentValidator.notNull(id, "id");
@@ -229,7 +225,7 @@ public class AccountServiceImpl extends AbstractKapuaConfigurableService impleme
         KapuaLocator locator = KapuaLocator.getInstance();
         AuthorizationService authorizationService = locator.getService(AuthorizationService.class);
         PermissionFactory permissionFactory = locator.getFactory(PermissionFactory.class);
-        authorizationService.checkPermission(permissionFactory.newPermission(AccountDomain.ACCOUNT, Actions.read, id));
+        authorizationService.checkPermission(permissionFactory.newPermission(accountDomain, Actions.read, id));
 
         //
         // Make sure account exists
@@ -238,8 +234,7 @@ public class AccountServiceImpl extends AbstractKapuaConfigurableService impleme
 
     @Override
     public Account findByName(String name)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Argument Validation
         ArgumentValidator.notEmptyOrNull(name, "name");
@@ -251,7 +246,7 @@ public class AccountServiceImpl extends AbstractKapuaConfigurableService impleme
                 KapuaLocator locator = KapuaLocator.getInstance();
                 AuthorizationService authorizationService = locator.getService(AuthorizationService.class);
                 PermissionFactory permissionFactory = locator.getFactory(PermissionFactory.class);
-                authorizationService.checkPermission(permissionFactory.newPermission(AccountDomain.ACCOUNT, Actions.read, account.getId()));
+                authorizationService.checkPermission(permissionFactory.newPermission(accountDomain, Actions.read, account.getId()));
             }
 
             return account;
@@ -260,8 +255,7 @@ public class AccountServiceImpl extends AbstractKapuaConfigurableService impleme
 
     @Override
     public AccountListResult findChildsRecursively(KapuaId id)
-        throws KapuaException
-    {
+            throws KapuaException {
 
         //
         // Validation of the fields
@@ -280,7 +274,7 @@ public class AccountServiceImpl extends AbstractKapuaConfigurableService impleme
         KapuaLocator locator = KapuaLocator.getInstance();
         AuthorizationService authorizationService = locator.getService(AuthorizationService.class);
         PermissionFactory permissionFactory = locator.getFactory(PermissionFactory.class);
-        authorizationService.checkPermission(permissionFactory.newPermission(AccountDomain.ACCOUNT, Actions.read, account.getId()));
+        authorizationService.checkPermission(permissionFactory.newPermission(accountDomain, Actions.read, account.getId()));
 
         return entityManagerSession.onResult(em -> {
             AccountListResult result = null;
@@ -296,8 +290,7 @@ public class AccountServiceImpl extends AbstractKapuaConfigurableService impleme
 
     @Override
     public KapuaListResultImpl<Account> query(KapuaQuery<Account> query)
-        throws KapuaException
-    {
+            throws KapuaException {
         ArgumentValidator.notNull(query, "query");
         ArgumentValidator.notNull(query.getScopeId(), "query.scopeId");
 
@@ -306,7 +299,7 @@ public class AccountServiceImpl extends AbstractKapuaConfigurableService impleme
         KapuaLocator locator = KapuaLocator.getInstance();
         AuthorizationService authorizationService = locator.getService(AuthorizationService.class);
         PermissionFactory permissionFactory = locator.getFactory(PermissionFactory.class);
-        authorizationService.checkPermission(permissionFactory.newPermission(AccountDomain.ACCOUNT, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(permissionFactory.newPermission(accountDomain, Actions.read, query.getScopeId()));
 
         return entityManagerSession.onResult(em -> {
             return AccountDAO.query(em, query);
@@ -315,8 +308,7 @@ public class AccountServiceImpl extends AbstractKapuaConfigurableService impleme
 
     @Override
     public long count(KapuaQuery<Account> query)
-        throws KapuaException
-    {
+            throws KapuaException {
         ArgumentValidator.notNull(query, "query");
         ArgumentValidator.notNull(query.getScopeId(), "query.scopeId");
 
@@ -325,7 +317,7 @@ public class AccountServiceImpl extends AbstractKapuaConfigurableService impleme
         KapuaLocator locator = KapuaLocator.getInstance();
         AuthorizationService authorizationService = locator.getService(AuthorizationService.class);
         PermissionFactory permissionFactory = locator.getFactory(PermissionFactory.class);
-        authorizationService.checkPermission(permissionFactory.newPermission(AccountDomain.ACCOUNT, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(permissionFactory.newPermission(accountDomain, Actions.read, query.getScopeId()));
 
         return entityManagerSession.onResult(em -> AccountDAO.count(em, query));
     }
@@ -338,8 +330,7 @@ public class AccountServiceImpl extends AbstractKapuaConfigurableService impleme
      * @throws KapuaException
      */
     private Account findById(KapuaId accountId)
-        throws KapuaException
-    {
+            throws KapuaException {
 
         //
         // Argument Validation
@@ -349,8 +340,7 @@ public class AccountServiceImpl extends AbstractKapuaConfigurableService impleme
     }
 
     private List<Account> findChildAccountsTrusted(KapuaId accountId)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Argument Validation
         ArgumentValidator.notNull(accountId, "accountId");

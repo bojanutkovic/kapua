@@ -21,6 +21,7 @@ import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
+import org.eclipse.kapua.service.authorization.domain.Domain;
 import org.eclipse.kapua.service.authorization.permission.Actions;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.user.User;
@@ -35,24 +36,23 @@ import org.eclipse.kapua.service.user.UserType;
  * @since 1.0
  *
  */
-public class UserServiceImpl extends AbstractKapuaConfigurableService implements UserService
-{
-    private static final long serialVersionUID = 4319929212203916781L;
+public class UserServiceImpl extends AbstractKapuaConfigurableService implements UserService {
 
+    private static final long serialVersionUID = 4319929212203916781L;
     private final KapuaLocator locator = KapuaLocator.getInstance();
+
+    private static final Domain userDomain = new UserDomain();
 
     /**
      * Constructor
      */
-    public UserServiceImpl()
-    {
-        super(UserService.class.getName(), UserDomain.USER, UserEntityManagerFactory.getInstance());
+    public UserServiceImpl() {
+        super(UserService.class.getName(), userDomain, UserEntityManagerFactory.getInstance());
     }
-    
+
     @Override
     public User create(UserCreator userCreator)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Argument Validation
         ArgumentValidator.notNull(userCreator.getScopeId().getId(), "scopeId");
@@ -72,15 +72,14 @@ public class UserServiceImpl extends AbstractKapuaConfigurableService implements
         // Check Access
         AuthorizationService authorizationService = locator.getService(AuthorizationService.class);
         PermissionFactory permissionFactory = locator.getFactory(PermissionFactory.class);
-        authorizationService.checkPermission(permissionFactory.newPermission(UserDomain.USER, Actions.write, userCreator.getScopeId()));
+        authorizationService.checkPermission(permissionFactory.newPermission(userDomain, Actions.write, userCreator.getScopeId()));
 
         return entityManagerSession.onTransactedInsert(em -> UserDAO.create(em, userCreator));
     }
 
     @Override
     public User update(User user)
-        throws KapuaException
-    {
+            throws KapuaException {
         // Validation of the fields
         ArgumentValidator.notNull(user.getId().getId(), "id");
         ArgumentValidator.notNull(user.getScopeId().getId(), "accountId");
@@ -99,7 +98,7 @@ public class UserServiceImpl extends AbstractKapuaConfigurableService implements
         // Check Access
         AuthorizationService authorizationService = locator.getService(AuthorizationService.class);
         PermissionFactory permissionFactory = locator.getFactory(PermissionFactory.class);
-        authorizationService.checkPermission(permissionFactory.newPermission(UserDomain.USER, Actions.write, user.getScopeId()));
+        authorizationService.checkPermission(permissionFactory.newPermission(userDomain, Actions.write, user.getScopeId()));
 
         //
         // Do update
@@ -128,7 +127,7 @@ public class UserServiceImpl extends AbstractKapuaConfigurableService implements
         // Check Access
         AuthorizationService authorizationService = locator.getService(AuthorizationService.class);
         PermissionFactory permissionFactory = locator.getFactory(PermissionFactory.class);
-        authorizationService.checkPermission(permissionFactory.newPermission(UserDomain.USER, Actions.write, scopeId));
+        authorizationService.checkPermission(permissionFactory.newPermission(userDomain, Actions.write, scopeId));
 
         // Do the delete
         entityManagerSession.onTransactedAction(em -> {
@@ -156,8 +155,7 @@ public class UserServiceImpl extends AbstractKapuaConfigurableService implements
 
     @Override
     public User find(KapuaId accountId, KapuaId userId)
-        throws KapuaException
-    {
+            throws KapuaException {
         // Validation of the fields
         ArgumentValidator.notNull(accountId.getId(), "accountId");
         ArgumentValidator.notNull(userId.getId(), "id");
@@ -166,7 +164,7 @@ public class UserServiceImpl extends AbstractKapuaConfigurableService implements
         // Check Access
         AuthorizationService authorizationService = locator.getService(AuthorizationService.class);
         PermissionFactory permissionFactory = locator.getFactory(PermissionFactory.class);
-        authorizationService.checkPermission(permissionFactory.newPermission(UserDomain.USER, Actions.read, accountId));
+        authorizationService.checkPermission(permissionFactory.newPermission(userDomain, Actions.read, accountId));
 
         // Do the find
         return entityManagerSession.onResult(em -> UserDAO.find(em, userId));
@@ -174,8 +172,7 @@ public class UserServiceImpl extends AbstractKapuaConfigurableService implements
 
     @Override
     public User findByName(String name)
-        throws KapuaException
-    {
+            throws KapuaException {
         // Validation of the fields
         ArgumentValidator.notEmptyOrNull(name, "name");
 
@@ -187,7 +184,7 @@ public class UserServiceImpl extends AbstractKapuaConfigurableService implements
             if (user != null) {
                 AuthorizationService authorizationService = locator.getService(AuthorizationService.class);
                 PermissionFactory permissionFactory = locator.getFactory(PermissionFactory.class);
-                authorizationService.checkPermission(permissionFactory.newPermission(UserDomain.USER, Actions.read, user.getScopeId()));
+                authorizationService.checkPermission(permissionFactory.newPermission(userDomain, Actions.read, user.getScopeId()));
             }
             return user;
         });
@@ -195,8 +192,7 @@ public class UserServiceImpl extends AbstractKapuaConfigurableService implements
 
     @Override
     public UserListResult query(KapuaQuery<User> query)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
@@ -206,15 +202,14 @@ public class UserServiceImpl extends AbstractKapuaConfigurableService implements
         // Check Access
         AuthorizationService authorizationService = locator.getService(AuthorizationService.class);
         PermissionFactory permissionFactory = locator.getFactory(PermissionFactory.class);
-        authorizationService.checkPermission(permissionFactory.newPermission(UserDomain.USER, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(permissionFactory.newPermission(userDomain, Actions.read, query.getScopeId()));
 
         return entityManagerSession.onResult(em -> UserDAO.query(em, query));
     }
 
     @Override
     public long count(KapuaQuery<User> query)
-        throws KapuaException
-    {
+            throws KapuaException {
         ArgumentValidator.notNull(query, "query");
         ArgumentValidator.notNull(query.getScopeId(), "query.scopeId");
 
@@ -222,7 +217,7 @@ public class UserServiceImpl extends AbstractKapuaConfigurableService implements
         // Check Access
         AuthorizationService authorizationService = locator.getService(AuthorizationService.class);
         PermissionFactory permissionFactory = locator.getFactory(PermissionFactory.class);
-        authorizationService.checkPermission(permissionFactory.newPermission(UserDomain.USER, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(permissionFactory.newPermission(userDomain, Actions.read, query.getScopeId()));
 
         return entityManagerSession.onResult(em -> UserDAO.count(em, query));
     }
@@ -234,8 +229,7 @@ public class UserServiceImpl extends AbstractKapuaConfigurableService implements
     // -----------------------------------------------------------------------------------------
 
     private void validateSystemUser(String name)
-        throws KapuaException
-    {
+            throws KapuaException {
         // FIXME-KAPUA: AuthenticationService get system user name via config
         if ("kapua-sys".equals(name)) {
             throw new KapuaIllegalArgumentException("name", "kapua-sys");

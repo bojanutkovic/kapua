@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.internal;
 
+import static java.util.concurrent.TimeUnit.DAYS;
+
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.text.ParseException;
@@ -32,8 +34,10 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
+import org.eclipse.kapua.service.authorization.domain.Domain;
 import org.eclipse.kapua.service.authorization.permission.Actions;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.datastore.DatastoreDomain;
 import org.eclipse.kapua.service.datastore.MessageStoreService;
 import org.eclipse.kapua.service.datastore.internal.elasticsearch.EsClient;
 import org.eclipse.kapua.service.datastore.internal.elasticsearch.EsDatastoreException;
@@ -77,36 +81,36 @@ import org.elasticsearch.index.engine.DocumentAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.concurrent.TimeUnit.DAYS;
+public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService implements MessageStoreService {
 
-public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService implements MessageStoreService
-{
-    private static final long    serialVersionUID  = 4142282449826005424L;
+    private static final long serialVersionUID = 4142282449826005424L;
 
     // @SuppressWarnings("unused")
-    private static final Logger  logger            = LoggerFactory.getLogger(MessageStoreServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(MessageStoreServiceImpl.class);
 
     private static final KapuaLocator locator = KapuaLocator.getInstance();
 
-	private static final long DAY_SECS = DAYS.toSeconds(1);
-	private static final long DAY_MILLIS = DAYS.toMillis(1);
-	private static final long DATASTORE_TTL_DAYS = 30;
-	private static final long DATASTORE_TTL_SECS = DATASTORE_TTL_DAYS * DAY_SECS;
+    private static final long DAY_SECS = DAYS.toSeconds(1);
+    private static final long DAY_MILLIS = DAYS.toMillis(1);
+    private static final long DATASTORE_TTL_DAYS = 30;
+    private static final long DATASTORE_TTL_SECS = DATASTORE_TTL_DAYS * DAY_SECS;
 
     private final AccountService accountService;
     private final AuthorizationService authorizationService;
     private final PermissionFactory permissionFactory;
 
-    private final EsSchema       esSchema;
-    private final int            maxTopicDepth;
+    private static final Domain datastoreDomain = new DatastoreDomain();
 
-    private final Object         metadataUpdateSync;
+    private final EsSchema esSchema;
+    private final int maxTopicDepth;
+
+    private final Object metadataUpdateSync;
 
     public MessageStoreServiceImpl(AccountService accountService, AuthorizationService authorizationService,
-                                      PermissionFactory permissionFactory, EsSchema esSchema,
-                                      int maxTopicDepth, Object metadataUpdateSync) {
+            PermissionFactory permissionFactory, EsSchema esSchema,
+            int maxTopicDepth, Object metadataUpdateSync) {
 
-        super(MessageStoreService.class.getName(), DatastoreDomain.DATASTORE, DatastoreEntityManagerFactory.getInstance());
+        super(MessageStoreService.class.getName(), datastoreDomain, DatastoreEntityManagerFactory.getInstance());
         this.accountService = accountService;
         this.authorizationService = authorizationService;
         this.permissionFactory = permissionFactory;
@@ -115,9 +119,7 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
         this.metadataUpdateSync = metadataUpdateSync;
     }
 
-
-    public MessageStoreServiceImpl()
-    {
+    public MessageStoreServiceImpl() {
         this(locator.getService(AccountService.class), locator.getService(AuthorizationService.class),
                 locator.getFactory(PermissionFactory.class), new EsSchema(),
                 DatastoreSettings.getInstance().getInt(DatastoreSettingKey.CONFIG_TOPIC_MAX_DEPTH), new Object());
@@ -125,8 +127,7 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
 
     @Override
     public StorableId store(KapuaId scopeId, MessageCreator messageCreator)
-        throws KapuaException
-    {
+            throws KapuaException {
         ArgumentValidator.notNull(messageCreator, "messageCreator");
 
         MessageImpl messageImpl = new MessageImpl();
@@ -139,8 +140,7 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
     }
 
     private StorableId store(KapuaId scopeId, Message message)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Argument Validation
         ArgumentValidator.notNull(scopeId, "scopeId");
@@ -195,14 +195,13 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
         try {
 
             return this.storeMessage(scopeName,
-                                     message,
-                                     maxTopicDepth,
-                                     indexedOn,
-                                     receivedOn,
-                                     ttl,
-                                     accountServicePlan.getMetricsIndexBy());
-        }
-        catch (Exception e) { // TODO create e new datastore exception
+                    message,
+                    maxTopicDepth,
+                    indexedOn,
+                    receivedOn,
+                    ttl,
+                    accountServicePlan.getMetricsIndexBy());
+        } catch (Exception e) { // TODO create e new datastore exception
             // TODO manage execeptions
             // CassandraUtils.handleException(e);
             // TODO Remove
@@ -213,8 +212,7 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
 
     @Override
     public void delete(KapuaId scopeId, StorableId id)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Argument Validation
         ArgumentValidator.notNull(scopeId, "scopeId");
@@ -238,10 +236,9 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
         try {
             String everyIndex = EsUtils.getAnyIndexName(scopeName);
             EsMessageDAO.connection(EsClient.getcurrent())
-                        .instance(everyIndex, EsSchema.MESSAGE_TYPE_NAME)
-                        .deleteById(id.toString());
-        }
-        catch (Exception exc) {
+                    .instance(everyIndex, EsSchema.MESSAGE_TYPE_NAME)
+                    .deleteById(id.toString());
+        } catch (Exception exc) {
             // TODO manage exeception
             // CassandraUtils.handleException(e);
             throw KapuaException.internalError(exc);
@@ -250,8 +247,7 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
 
     @Override
     public Message find(KapuaId scopeId, StorableId id, MessageFetchStyle fetchStyle)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Argument Validation
         ArgumentValidator.notNull(scopeId, "scopeId");
@@ -268,15 +264,14 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
             String everyIndex = EsUtils.getAnyIndexName(scopeName);
             MessageListResult result = null;
             result = EsMessageDAO.connection(EsClient.getcurrent())
-                                 .instance(everyIndex, EsSchema.MESSAGE_TYPE_NAME)
-                                 .query(null);
+                    .instance(everyIndex, EsSchema.MESSAGE_TYPE_NAME)
+                    .query(null);
 
             if (true)
                 throw KapuaException.internalError("Method not implemented.");
 
             return null;
-        }
-        catch (Exception exc) {
+        } catch (Exception exc) {
             // TODO manage exeception
             // CassandraUtils.handleException(e);
             throw KapuaException.internalError(exc);
@@ -285,8 +280,7 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
 
     @Override
     public MessageListResult query(KapuaId scopeId, MessageQuery query)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Argument Validation
         ArgumentValidator.notNull(scopeId, "scopeId");
@@ -311,12 +305,11 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
             String everyIndex = EsUtils.getAnyIndexName(scopeName);
             MessageListResult result = null;
             result = EsMessageDAO.connection(EsClient.getcurrent())
-                                 .instance(everyIndex, EsSchema.MESSAGE_TYPE_NAME)
-                                 .query(query);
+                    .instance(everyIndex, EsSchema.MESSAGE_TYPE_NAME)
+                    .query(query);
 
             return result;
-        }
-        catch (Exception exc) {
+        } catch (Exception exc) {
             // TODO manage exeception
             // CassandraUtils.handleException(e);
             throw KapuaException.internalError(exc);
@@ -324,8 +317,7 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
     }
 
     public long count(KapuaId scopeId, MessageQuery query)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Argument Validation
         ArgumentValidator.notNull(scopeId, "scopeId");
@@ -350,12 +342,11 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
             String everyIndex = EsUtils.getAnyIndexName(scopeName);
             long result;
             result = EsMessageDAO.connection(EsClient.getcurrent())
-                                 .instance(everyIndex, EsSchema.MESSAGE_TYPE_NAME)
-                                 .count(query);
+                    .instance(everyIndex, EsSchema.MESSAGE_TYPE_NAME)
+                    .count(query);
 
             return result;
-        }
-        catch (Exception exc) {
+        } catch (Exception exc) {
             // TODO manage exeception
             // CassandraUtils.handleException(e);
             throw KapuaException.internalError(exc);
@@ -364,8 +355,7 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
 
     @Override
     public void delete(KapuaId scopeId, MessageQuery query)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Argument Validation
         ArgumentValidator.notNull(scopeId, "scopeId");
@@ -389,12 +379,11 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
         try {
             String everyIndex = EsUtils.getAnyIndexName(scopeName);
             EsMessageDAO.connection(EsClient.getcurrent())
-                        .instance(everyIndex, EsSchema.MESSAGE_TYPE_NAME)
-                        .deleteByQuery(query);
+                    .instance(everyIndex, EsSchema.MESSAGE_TYPE_NAME)
+                    .deleteByQuery(query);
 
             return;
-        }
-        catch (Exception exc) {
+        } catch (Exception exc) {
             // TODO manage exeception
             // CassandraUtils.handleException(e);
             throw KapuaException.internalError(exc);
@@ -402,8 +391,7 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
     }
 
     private void checkDataAccess(KapuaId scopeId, Actions action)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Check Access
 
@@ -418,21 +406,19 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
     }
 
     private AccountInfo getAccountServicePlan(KapuaId scopeId)
-        throws KapuaException
-    {
+            throws KapuaException {
         Account account = accountService.find(scopeId);
         return new AccountInfo(account, new LocalServicePlan(this.getConfigValues(account.getId())));
     }
 
     private StorableId storeMessage(String accountName,
-                                    Message message,
-                                    int maxTopicDepth,
-                                    long indexedOn,
-                                    long receivedOn,
-                                    long ttl,
-                                    MetricsIndexBy indexBy)
-        throws IOException, ParseException, EsDatastoreException, KapuaInvalidTopicException
-    {
+            Message message,
+            int maxTopicDepth,
+            long indexedOn,
+            long receivedOn,
+            long ttl,
+            MetricsIndexBy indexBy)
+            throws IOException, ParseException, EsDatastoreException, KapuaInvalidTopicException {
 
         // Extract schema metadata
         EsSchema.Metadata schemaMetadata = this.esSchema.synch(accountName, indexedOn);
@@ -463,8 +449,7 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
     }
 
     private void updateIndividually(EsSchema.Metadata schemaMetadata, EsDocumentBuilder docBuilder)
-        throws UnknownHostException, EsDatastoreException
-    {
+            throws UnknownHostException, EsDatastoreException {
 
         String indexName = schemaMetadata.getPublicIndexName();
         String messageTypeName = schemaMetadata.getMessageTypeName();
@@ -476,8 +461,8 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
         // Save message (the big one)
         // TODO check response
         EsMessageDAO.connection(EsClient.getcurrent())
-                    .instance(indexName, messageTypeName)
-                    .upsert(docBuilder.getMessageId(), docBuilder.getMessage());
+                .instance(indexName, messageTypeName)
+                .upsert(docBuilder.getMessageId(), docBuilder.getMessage());
 
         // Save topic. Look up topic in the cache, and cache it if it doesn't exist
         if (!DatastoreCacheManager.getInstance().getTopicsCache().get(docBuilder.getTopicId())) {
@@ -491,11 +476,10 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
                     UpdateResponse response = null;
                     try {
                         response = EsTopicDAO.connection(EsClient.getcurrent())
-                                             .instance(kapuaIndexName, topicTypeName)
-                                             .upsert(docBuilder.getTopicId(), docBuilder.getTopicBuilder());
+                                .instance(kapuaIndexName, topicTypeName)
+                                .upsert(docBuilder.getTopicId(), docBuilder.getTopicBuilder());
                         logger.debug(String.format("Upsert on topic succesfully executed [%s.%s, %s]", kapuaIndexName, topicTypeName, response.getId()));
-                    }
-                    catch (DocumentAlreadyExistsException exc) {
+                    } catch (DocumentAlreadyExistsException exc) {
                         logger.trace(String.format("Upsert failed because topic already exists [%s, %s]", docBuilder.getTopicId(), exc.getMessage()));
                     }
                     // Update cache if topic update is completed successfully
@@ -506,7 +490,7 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
 
         // Save topic metrics
         EsMetricDAO.connection(EsClient.getcurrent())
-                   .instance(kapuaIndexName, metricTypeName);
+                .instance(kapuaIndexName, metricTypeName);
 
         BulkRequest bulkRequest = new BulkRequest();
         List<EsMetricDocumentBuilder> esTopicMetrics = docBuilder.getTopicMetrics();
@@ -516,8 +500,8 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
                     continue;
                 // this.esTopicMetricDAO.upsert(esTopicMetric);
                 bulkRequest.add(EsMetricDAO.connection(EsClient.getcurrent())
-                                           .instance(kapuaIndexName, metricTypeName)
-                                           .getUpsertRequest(esTopicMetric));
+                        .instance(kapuaIndexName, metricTypeName)
+                        .getUpsertRequest(esTopicMetric));
             }
         }
 
@@ -529,7 +513,7 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
             // the update.
             synchronized (this.metadataUpdateSync) {
                 BulkResponse response = EsMetricDAO.connection(EsClient.getcurrent())
-                                                   .bulk(bulkRequest);
+                        .bulk(bulkRequest);
 
                 BulkItemResponse[] itemResponses = response.getItems();
                 if (itemResponses != null) {
@@ -565,11 +549,10 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
                     UpdateResponse response = null;
                     try {
                         response = EsAssetDAO.connection(EsClient.getcurrent())
-                                             .instance(kapuaIndexName, assetTypeName)
-                                             .upsert(docBuilder.getAssetId(), docBuilder.getAssetBuilder());
+                                .instance(kapuaIndexName, assetTypeName)
+                                .upsert(docBuilder.getAssetId(), docBuilder.getAssetBuilder());
                         logger.debug(String.format("Upsert on asset succesfully executed [%s.%s, %s]", kapuaIndexName, topicTypeName, response.getId()));
-                    }
-                    catch (DocumentAlreadyExistsException exc) {
+                    } catch (DocumentAlreadyExistsException exc) {
                         logger.trace(String.format("Upsert failed because asset already exists [%s, %s]", docBuilder.getAssetId(), exc.getMessage()));
                     }
                     // Update cache if asset update is completed successfully
@@ -580,8 +563,7 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
     }
 
     private void resetCache(String accountName, String topic)
-        throws Exception
-    {
+            throws Exception {
 
         boolean isAnyAsset;
         boolean isAssetToDelete = false;
@@ -596,8 +578,7 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
 
             if (semTopic.isEmpty() && !isAnyAsset)
                 isAssetToDelete = true;
-        }
-        else {
+        } else {
             isAnyAsset = true;
             semTopic = "";
             isAssetToDelete = true;
@@ -621,8 +602,8 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
         // Remove metrics
         while (totalHits > 0) {
             MetricInfoListResult metrics = EsMetricDAO.connection(EsClient.getcurrent())
-                                                      .instance(everyIndex, EsSchema.METRIC_TYPE_NAME)
-                                                      .query(metricQuery);
+                    .instance(everyIndex, EsSchema.METRIC_TYPE_NAME)
+                    .query(metricQuery);
 
             totalHits = metrics.size();
             LocalCache<String, Boolean> metricsCache = DatastoreCacheManager.getInstance().getMetricsCache();
@@ -641,8 +622,8 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
         logger.debug(String.format("Removed cached topic metrics for [%s]", topic));
 
         EsMetricDAO.connection(EsClient.getcurrent())
-                   .instance(everyIndex, EsSchema.METRIC_TYPE_NAME)
-                   .deleteByQuery(metricQuery);
+                .instance(everyIndex, EsSchema.METRIC_TYPE_NAME)
+                .deleteByQuery(metricQuery);
 
         logger.debug(String.format("Removed topic metrics for [%s]", topic));
         //
@@ -660,8 +641,8 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
         totalHits = 1;
         while (totalHits > 0) {
             TopicInfoListResult topics = EsTopicDAO.connection(EsClient.getcurrent())
-                                                   .instance(everyIndex, EsSchema.TOPIC_TYPE_NAME)
-                                                   .query(topicQuery);
+                    .instance(everyIndex, EsSchema.TOPIC_TYPE_NAME)
+                    .query(topicQuery);
 
             totalHits = topics.size();
             LocalCache<String, Boolean> topicsCache = DatastoreCacheManager.getInstance().getTopicsCache();
@@ -679,8 +660,8 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
         logger.debug(String.format("Removed cached topics for [%s]", topic));
 
         EsTopicDAO.connection(EsClient.getcurrent())
-                  .instance(everyIndex, EsSchema.TOPIC_TYPE_NAME)
-                  .deleteByQuery(topicQuery);
+                .instance(everyIndex, EsSchema.TOPIC_TYPE_NAME)
+                .deleteByQuery(topicQuery);
 
         logger.debug(String.format("Removed topics for [%s]", topic));
         //
@@ -700,8 +681,8 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
             totalHits = 1;
             while (totalHits > 0) {
                 AssetInfoListResult assets = EsAssetDAO.connection(EsClient.getcurrent())
-                                                       .instance(everyIndex, EsSchema.ASSET_TYPE_NAME)
-                                                       .query(assetQuery);
+                        .instance(everyIndex, EsSchema.ASSET_TYPE_NAME)
+                        .query(assetQuery);
 
                 totalHits = assets.size();
                 LocalCache<String, Boolean> assetsCache = DatastoreCacheManager.getInstance().getAssetsCache();
@@ -719,8 +700,8 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
             logger.debug(String.format("Removed cached assets for [%s]", topic));
 
             EsAssetDAO.connection(EsClient.getcurrent())
-                      .instance(everyIndex, EsSchema.ASSET_TYPE_NAME)
-                      .deleteByQuery(assetQuery);
+                    .instance(everyIndex, EsSchema.ASSET_TYPE_NAME)
+                    .deleteByQuery(assetQuery);
 
             logger.debug(String.format("Removed assets for [%s]", topic));
         }

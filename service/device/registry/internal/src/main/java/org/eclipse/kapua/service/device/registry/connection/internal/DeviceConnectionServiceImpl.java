@@ -22,6 +22,7 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.model.query.predicate.KapuaPredicate;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
+import org.eclipse.kapua.service.authorization.domain.Domain;
 import org.eclipse.kapua.service.authorization.permission.Actions;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnection;
@@ -38,18 +39,17 @@ import org.eclipse.kapua.service.device.registry.internal.DeviceEntityManagerFac
  * @since 1.0
  * 
  */
-public class DeviceConnectionServiceImpl extends AbstractKapuaService implements DeviceConnectionService
-{
+public class DeviceConnectionServiceImpl extends AbstractKapuaService implements DeviceConnectionService {
 
-    public DeviceConnectionServiceImpl()
-    {
+    private static final Domain deviceConnectonDomain = new DeviceConnectionDomain();
+
+    public DeviceConnectionServiceImpl() {
         super(DeviceEntityManagerFactory.instance());
     }
 
     @Override
     public DeviceConnection create(DeviceConnectionCreator deviceConnectionCreator)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Argument Validation
         ArgumentValidator.notNull(deviceConnectionCreator, "deviceConnectionCreator");
@@ -62,15 +62,14 @@ public class DeviceConnectionServiceImpl extends AbstractKapuaService implements
         KapuaLocator locator = KapuaLocator.getInstance();
         AuthorizationService authorizationService = locator.getService(AuthorizationService.class);
         PermissionFactory permissionFactory = locator.getFactory(PermissionFactory.class);
-        authorizationService.checkPermission(permissionFactory.newPermission(DeviceConnectionDomain.DEVICE_CONNECTION, Actions.write, deviceConnectionCreator.getScopeId()));
+        authorizationService.checkPermission(permissionFactory.newPermission(deviceConnectonDomain, Actions.write, deviceConnectionCreator.getScopeId()));
 
         return entityManagerSession.onTransactedInsert(em -> DeviceConnectionDAO.create(em, deviceConnectionCreator));
     }
 
     @Override
     public DeviceConnection update(DeviceConnection deviceConnection)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Argument Validation
         ArgumentValidator.notNull(deviceConnection, "deviceConnection");
@@ -82,7 +81,7 @@ public class DeviceConnectionServiceImpl extends AbstractKapuaService implements
         KapuaLocator locator = KapuaLocator.getInstance();
         AuthorizationService authorizationService = locator.getService(AuthorizationService.class);
         PermissionFactory permissionFactory = locator.getFactory(PermissionFactory.class);
-        authorizationService.checkPermission(permissionFactory.newPermission(DeviceConnectionDomain.DEVICE_CONNECTION, Actions.write, deviceConnection.getScopeId()));
+        authorizationService.checkPermission(permissionFactory.newPermission(deviceConnectonDomain, Actions.write, deviceConnection.getScopeId()));
 
         return entityManagerSession.onTransactedResult(em -> {
             if (DeviceConnectionDAO.find(em, deviceConnection.getId()) == null) {
@@ -94,8 +93,7 @@ public class DeviceConnectionServiceImpl extends AbstractKapuaService implements
 
     @Override
     public DeviceConnection find(KapuaId scopeId, KapuaId entityId)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Argument Validation
         ArgumentValidator.notNull(scopeId, "scopeId");
@@ -106,15 +104,14 @@ public class DeviceConnectionServiceImpl extends AbstractKapuaService implements
         KapuaLocator locator = KapuaLocator.getInstance();
         AuthorizationService authorizationService = locator.getService(AuthorizationService.class);
         PermissionFactory permissionFactory = locator.getFactory(PermissionFactory.class);
-        authorizationService.checkPermission(permissionFactory.newPermission(DeviceConnectionDomain.DEVICE_CONNECTION, Actions.read, scopeId));
+        authorizationService.checkPermission(permissionFactory.newPermission(deviceConnectonDomain, Actions.read, scopeId));
 
         return entityManagerSession.onResult(em -> DeviceConnectionDAO.find(em, entityId));
     }
 
     @Override
     public DeviceConnection findByClientId(KapuaId scopeId, String clientId)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Argument Validation
         ArgumentValidator.notNull(scopeId, "scopeId");
@@ -139,8 +136,7 @@ public class DeviceConnectionServiceImpl extends AbstractKapuaService implements
 
     @Override
     public DeviceConnectionListResult query(KapuaQuery<DeviceConnection> query)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
@@ -151,15 +147,14 @@ public class DeviceConnectionServiceImpl extends AbstractKapuaService implements
         KapuaLocator locator = KapuaLocator.getInstance();
         AuthorizationService authorizationService = locator.getService(AuthorizationService.class);
         PermissionFactory permissionFactory = locator.getFactory(PermissionFactory.class);
-        authorizationService.checkPermission(permissionFactory.newPermission(DeviceConnectionDomain.DEVICE_CONNECTION, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(permissionFactory.newPermission(deviceConnectonDomain, Actions.read, query.getScopeId()));
 
         return entityManagerSession.onResult(em -> DeviceConnectionDAO.query(em, query));
     }
 
     @Override
     public long count(KapuaQuery<DeviceConnection> query)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
@@ -170,15 +165,14 @@ public class DeviceConnectionServiceImpl extends AbstractKapuaService implements
         KapuaLocator locator = KapuaLocator.getInstance();
         AuthorizationService authorizationService = locator.getService(AuthorizationService.class);
         PermissionFactory permissionFactory = locator.getFactory(PermissionFactory.class);
-        authorizationService.checkPermission(permissionFactory.newPermission(DeviceConnectionDomain.DEVICE_CONNECTION, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(permissionFactory.newPermission(deviceConnectonDomain, Actions.read, query.getScopeId()));
 
         return entityManagerSession.onResult(em -> DeviceConnectionDAO.count(em, query));
     }
 
     @Override
     public void delete(KapuaId scopeId, KapuaId deviceConnectionId)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Argument Validation
         ArgumentValidator.notNull(deviceConnectionId, "deviceConnection.id");
@@ -189,7 +183,7 @@ public class DeviceConnectionServiceImpl extends AbstractKapuaService implements
         KapuaLocator locator = KapuaLocator.getInstance();
         AuthorizationService authorizationService = locator.getService(AuthorizationService.class);
         PermissionFactory permissionFactory = locator.getFactory(PermissionFactory.class);
-        authorizationService.checkPermission(permissionFactory.newPermission(DeviceConnectionDomain.DEVICE_CONNECTION, Actions.write, scopeId));
+        authorizationService.checkPermission(permissionFactory.newPermission(deviceConnectonDomain, Actions.write, scopeId));
 
         entityManagerSession.onTransactedAction(em -> {
             if (DeviceConnectionDAO.find(em, deviceConnectionId) == null) {
@@ -201,16 +195,14 @@ public class DeviceConnectionServiceImpl extends AbstractKapuaService implements
 
     @Override
     public void connect(DeviceConnectionCreator creator)
-        throws KapuaException
-    {
+            throws KapuaException {
         // TODO Auto-generated method stub
 
     }
 
     @Override
     public void disconnect(KapuaId scopeId, String clientId)
-        throws KapuaException
-    {
+            throws KapuaException {
         // TODO Auto-generated method stub
 
     }

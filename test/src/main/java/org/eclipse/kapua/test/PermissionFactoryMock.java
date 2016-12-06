@@ -15,6 +15,7 @@ package org.eclipse.kapua.test;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.locator.guice.TestService;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.service.authorization.domain.Domain;
 import org.eclipse.kapua.service.authorization.permission.Actions;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
@@ -22,6 +23,11 @@ import org.eclipse.kapua.service.authorization.role.RolePermission;
 
 @TestService
 public class PermissionFactoryMock implements PermissionFactory {
+
+    @Override
+    public Permission newPermission(Domain domain, Actions action, KapuaId targetScopeId) {
+        return newPermission(domain.getName(), action, targetScopeId);
+    }
 
     @Override
     public Permission newPermission(String domain, Actions action, KapuaId targetScopeId) {

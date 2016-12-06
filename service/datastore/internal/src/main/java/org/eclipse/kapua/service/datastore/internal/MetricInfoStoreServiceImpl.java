@@ -22,9 +22,11 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
+import org.eclipse.kapua.service.authorization.domain.Domain;
 import org.eclipse.kapua.service.authorization.permission.Actions;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.datastore.DatastoreDomain;
 import org.eclipse.kapua.service.datastore.MetricInfoStoreService;
 import org.eclipse.kapua.service.datastore.internal.elasticsearch.EsClient;
 import org.eclipse.kapua.service.datastore.internal.elasticsearch.EsMessageField;
@@ -43,23 +45,24 @@ import org.eclipse.kapua.service.datastore.model.query.MetricInfoQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MetricInfoStoreServiceImpl extends AbstractKapuaConfigurableService implements MetricInfoStoreService
-{
-    private static final long    serialVersionUID = 7490084233555473342L;
+public class MetricInfoStoreServiceImpl extends AbstractKapuaConfigurableService implements MetricInfoStoreService {
+
+    private static final long serialVersionUID = 7490084233555473342L;
 
     // @SuppressWarnings("unused")
-    private static final Logger  logger           = LoggerFactory.getLogger(MetricInfoStoreServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(MetricInfoStoreServiceImpl.class);
 
-    private static final long    DAY_SECS         = 24 * 60 * 60;
-    private static final long    DAY_MILLIS       = DAY_SECS * 1000;
+    private static final long DAY_SECS = 24 * 60 * 60;
+    private static final long DAY_MILLIS = DAY_SECS * 1000;
 
-    private AccountService       accountService;
+    private AccountService accountService;
     private AuthorizationService authorizationService;
-    private PermissionFactory    permissionFactory;
+    private PermissionFactory permissionFactory;
 
-    public MetricInfoStoreServiceImpl()
-    {
-        super(MetricInfoStoreService.class.getName(), DatastoreDomain.DATASTORE, DatastoreEntityManagerFactory.getInstance());
+    private static final Domain datastoreDomain = new DatastoreDomain();
+
+    public MetricInfoStoreServiceImpl() {
+        super(MetricInfoStoreService.class.getName(), datastoreDomain, DatastoreEntityManagerFactory.getInstance());
 
         KapuaLocator locator = KapuaLocator.getInstance();
         accountService = locator.getService(AccountService.class);
@@ -89,8 +92,7 @@ public class MetricInfoStoreServiceImpl extends AbstractKapuaConfigurableService
 
     @Override
     public void delete(KapuaId scopeId, StorableId id)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Argument Validation
         ArgumentValidator.notNull(scopeId, "scopeId");
@@ -114,10 +116,9 @@ public class MetricInfoStoreServiceImpl extends AbstractKapuaConfigurableService
         try {
             String everyIndex = EsUtils.getAnyIndexName(scopeName);
             EsMetricDAO.connection(EsClient.getcurrent())
-                       .instance(everyIndex, EsSchema.METRIC_TYPE_NAME)
-                       .deleteById(id.toString());
-        }
-        catch (Exception exc) {
+                    .instance(everyIndex, EsSchema.METRIC_TYPE_NAME)
+                    .deleteById(id.toString());
+        } catch (Exception exc) {
             // TODO manage exeception
             // CassandraUtils.handleException(e);
             throw KapuaException.internalError(exc);
@@ -126,8 +127,7 @@ public class MetricInfoStoreServiceImpl extends AbstractKapuaConfigurableService
 
     @Override
     public MetricInfo find(KapuaId scopeId, StorableId id)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Argument Validation
         ArgumentValidator.notNull(scopeId, "scopeId");
@@ -155,8 +155,7 @@ public class MetricInfoStoreServiceImpl extends AbstractKapuaConfigurableService
 
     @Override
     public MetricInfoListResult query(KapuaId scopeId, MetricInfoQuery query)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Argument Validation
         ArgumentValidator.notNull(scopeId, "scopeId");
@@ -181,12 +180,11 @@ public class MetricInfoStoreServiceImpl extends AbstractKapuaConfigurableService
             String everyIndex = EsUtils.getAnyIndexName(scopeName);
             MetricInfoListResult result = null;
             result = EsMetricDAO.connection(EsClient.getcurrent())
-                                .instance(everyIndex, EsSchema.METRIC_TYPE_NAME)
-                                .query(query);
+                    .instance(everyIndex, EsSchema.METRIC_TYPE_NAME)
+                    .query(query);
 
             return result;
-        }
-        catch (Exception exc) {
+        } catch (Exception exc) {
             // TODO manage exeception
             // CassandraUtils.handleException(e);
             throw KapuaException.internalError(exc);
@@ -195,8 +193,7 @@ public class MetricInfoStoreServiceImpl extends AbstractKapuaConfigurableService
 
     @Override
     public long count(KapuaId scopeId, MetricInfoQuery query)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Argument Validation
         ArgumentValidator.notNull(scopeId, "scopeId");
@@ -221,12 +218,11 @@ public class MetricInfoStoreServiceImpl extends AbstractKapuaConfigurableService
             String everyIndex = EsUtils.getAnyIndexName(scopeName);
             long result;
             result = EsMetricDAO.connection(EsClient.getcurrent())
-                                .instance(everyIndex, EsSchema.METRIC_TYPE_NAME)
-                                .count(query);
+                    .instance(everyIndex, EsSchema.METRIC_TYPE_NAME)
+                    .count(query);
 
             return result;
-        }
-        catch (Exception exc) {
+        } catch (Exception exc) {
             // TODO manage exeception
             // CassandraUtils.handleException(e);
             throw KapuaException.internalError(exc);
@@ -235,8 +231,7 @@ public class MetricInfoStoreServiceImpl extends AbstractKapuaConfigurableService
 
     @Override
     public void delete(KapuaId scopeId, MetricInfoQuery query)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Argument Validation
         ArgumentValidator.notNull(scopeId, "scopeId");
@@ -259,12 +254,11 @@ public class MetricInfoStoreServiceImpl extends AbstractKapuaConfigurableService
         try {
             String everyIndex = EsUtils.getAnyIndexName(scopeName);
             EsMetricDAO.connection(EsClient.getcurrent())
-                       .instance(everyIndex, EsSchema.METRIC_TYPE_NAME)
-                       .deleteByQuery(query);
+                    .instance(everyIndex, EsSchema.METRIC_TYPE_NAME)
+                    .deleteByQuery(query);
 
             return;
-        }
-        catch (Exception exc) {
+        } catch (Exception exc) {
             // TODO manage exeception
             // CassandraUtils.handleException(e);
             throw KapuaException.internalError(exc);
@@ -272,18 +266,16 @@ public class MetricInfoStoreServiceImpl extends AbstractKapuaConfigurableService
     }
 
     private void checkDataAccess(KapuaId scopeId, Actions action)
-        throws KapuaException
-    {
+            throws KapuaException {
         //
         // Check Access
         // TODO add enum for actions
-        Permission permission = permissionFactory.newPermission(DatastoreDomain.DATASTORE, action, scopeId);
+        Permission permission = permissionFactory.newPermission(datastoreDomain, action, scopeId);
         authorizationService.checkPermission(permission);
     }
 
     private AccountInfo getAccountServicePlan(KapuaId scopeId)
-        throws KapuaException
-    {
+            throws KapuaException {
         Account account = accountService.find(scopeId);
         return new AccountInfo(account, new LocalServicePlan(this.getConfigValues(account.getId())));
     }
