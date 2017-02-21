@@ -15,6 +15,7 @@ package org.eclipse.kapua.app.console.shared.util;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.kapua.app.console.client.group.GwtGroupQuery;
 import org.eclipse.kapua.app.console.shared.model.GwtEntityModel;
 import org.eclipse.kapua.app.console.shared.model.GwtPermission;
 import org.eclipse.kapua.app.console.shared.model.GwtPermission.GwtAction;
@@ -23,6 +24,7 @@ import org.eclipse.kapua.app.console.shared.model.GwtUpdatableEntityModel;
 import org.eclipse.kapua.app.console.shared.model.authorization.GwtAccessInfoCreator;
 import org.eclipse.kapua.app.console.shared.model.authorization.GwtAccessPermissionCreator;
 import org.eclipse.kapua.app.console.shared.model.authorization.GwtAccessRoleCreator;
+import org.eclipse.kapua.app.console.shared.model.authorization.GwtAccessRoleQuery;
 import org.eclipse.kapua.app.console.shared.model.authorization.GwtRole;
 import org.eclipse.kapua.app.console.shared.model.authorization.GwtRoleCreator;
 import org.eclipse.kapua.app.console.shared.model.authorization.GwtRolePermission;
@@ -40,6 +42,7 @@ import org.eclipse.kapua.service.account.internal.AccountDomain;
 import org.eclipse.kapua.service.authentication.credential.shiro.CredentialDomain;
 import org.eclipse.kapua.service.authentication.token.shiro.AccessTokenDomain;
 import org.eclipse.kapua.service.authorization.access.AccessInfoCreator;
+import org.eclipse.kapua.service.authorization.access.AccessRoleQuery;
 import org.eclipse.kapua.service.authorization.access.AccessInfoFactory;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionCreator;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionFactory;
@@ -49,6 +52,8 @@ import org.eclipse.kapua.service.authorization.access.shiro.AccessInfoDomain;
 import org.eclipse.kapua.service.authorization.domain.Domain;
 import org.eclipse.kapua.service.authorization.domain.shiro.DomainDomain;
 import org.eclipse.kapua.service.authorization.group.shiro.GroupDomain;
+import org.eclipse.kapua.service.authorization.group.GroupFactory;
+import org.eclipse.kapua.service.authorization.group.GroupQuery;
 import org.eclipse.kapua.service.authorization.permission.Action;
 import org.eclipse.kapua.service.authorization.permission.Actions;
 import org.eclipse.kapua.service.authorization.permission.Permission;
@@ -66,6 +71,8 @@ import org.eclipse.kapua.service.device.registry.connection.internal.DeviceConne
 import org.eclipse.kapua.service.device.registry.event.internal.DeviceEventDomain;
 import org.eclipse.kapua.service.device.registry.internal.DeviceDomain;
 import org.eclipse.kapua.service.device.registry.lifecycle.DeviceLifecycleDomain;
+import org.eclipse.kapua.service.user.UserFactory;
+import org.eclipse.kapua.service.user.UserQuery;
 import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserQuery;
 import org.eclipse.kapua.service.user.internal.UserDomain;
@@ -111,6 +118,38 @@ public class GwtKapuaModelConverter {
         return roleQuery;
     }
     
+
+    public static GroupQuery convertGroupQuery(PagingLoadConfig loadConfig,
+            GwtGroupQuery gwtGroupQuery) {
+        KapuaLocator locator = KapuaLocator.getInstance();
+        GroupFactory groupFactory = locator.getFactory(GroupFactory.class);
+        GroupQuery groupQuery = groupFactory.newQuery(convert(gwtGroupQuery.getScopeId()));
+        if (gwtGroupQuery.getName() != null && gwtGroupQuery.getName() != "") {
+            groupQuery
+                    .setPredicate(new AttributePredicate<String>("name", gwtGroupQuery.getName()));
+        }
+        groupQuery.setOffset(loadConfig.getOffset());
+        groupQuery.setLimit(loadConfig.getLimit());
+
+        return groupQuery;
+    }
+
+    public static AccessRoleQuery convertAccessRoleQuery(PagingLoadConfig pagingLoadConfig,
+            GwtAccessRoleQuery gwtRoleQuery) {
+
+        KapuaLocator locator = KapuaLocator.getInstance();
+        AccessRoleFactory accessRoleFactory = locator.getFactory(AccessRoleFactory.class);
+        AccessRoleQuery accessRoleQuery = accessRoleFactory
+                .newQuery(convert(gwtRoleQuery.getScopeId()));
+        accessRoleQuery.setPredicate(new AttributePredicate<KapuaId>("roleId",
+                KapuaEid.parseCompactId(gwtRoleQuery.getRoleId())));
+        accessRoleQuery.setOffset(pagingLoadConfig.getOffset());
+        accessRoleQuery.setLimit(pagingLoadConfig.getLimit());
+
+        return accessRoleQuery;
+
+    }
+
     /**
      * Converts a {@link GwtRoleQuery} into a {@link Role} object for backend usage
      * 

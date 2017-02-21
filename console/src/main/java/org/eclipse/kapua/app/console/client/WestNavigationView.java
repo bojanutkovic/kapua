@@ -17,6 +17,7 @@ import java.util.Arrays;
 import org.eclipse.kapua.app.console.client.account.AccountDetailsView;
 import org.eclipse.kapua.app.console.client.account.AccountView;
 import org.eclipse.kapua.app.console.client.device.DevicesView;
+import org.eclipse.kapua.app.console.client.group.GroupView;
 import org.eclipse.kapua.app.console.client.messages.ConsoleMessages;
 import org.eclipse.kapua.app.console.client.resources.icons.IconSet;
 import org.eclipse.kapua.app.console.client.resources.icons.KapuaIcon;
@@ -216,6 +217,18 @@ public class WestNavigationView extends LayoutContainer {
                     m_centerPanel.add(panel);
                     m_centerPanel.layout();
                     dashboardSelected = false;
+                    
+                } else if("groups".equals(selectedId)){
+                     panel.setIcon(new KapuaIcon(IconSet.OBJECT_GROUP));
+                     panel.setHeading(MSGS.groups());
+                     
+                     GroupView groupView = new GroupView(m_currentSession);
+                     panel.add(groupView);
+                     
+                     m_centerPanel.add(panel);
+                     m_centerPanel.layout();
+                     dashboardSelected = false;
+                     
                 } else if ("mysettings".equals(selectedId)) {
 
                     AccountDetailsView settingView = new AccountDetailsView(null, m_currentSession);
@@ -314,6 +327,9 @@ public class WestNavigationView extends LayoutContainer {
             }
             if (m_currentSession.hasUserReadPermission()) {
                 cloudResourcesTreeStore.add(newItem("role", MSGS.roles(), IconSet.STREET_VIEW), false);
+            }
+            if (m_currentSession.hasUserReadPermission()){
+                cloudResourcesTreeStore.add(newItem("groups", MSGS.groups(), IconSet.OBJECT_GROUP), false);
             }
             if (m_currentSession.hasAccountReadPermission()) {
                 cloudResourcesTreeStore.add(newItem("mysettings", MSGS.settings(), IconSet.COG), false);
