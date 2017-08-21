@@ -15,6 +15,7 @@ package org.eclipse.kapua.app.api.v1.resources;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.Authorization;
 import org.eclipse.kapua.app.api.v1.resources.model.EntityId;
 import org.eclipse.kapua.app.api.v1.resources.model.ScopeId;
 import org.eclipse.kapua.locator.KapuaLocator;
@@ -22,7 +23,7 @@ import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.device.management.command.DeviceCommandOutput;
 import org.eclipse.kapua.service.device.management.request.DeviceRequestManagementService;
 import org.eclipse.kapua.service.device.management.request.message.request.GenericRequestMessage;
-import org.eclipse.kapua.service.device.management.response.KapuaResponseMessage;
+import org.eclipse.kapua.service.device.management.request.message.response.GenericResponseMessage;
 import org.eclipse.kapua.service.device.registry.Device;
 
 import javax.ws.rs.Consumes;
@@ -33,7 +34,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-@Api("Devices")
+@Api(value = "Devices", authorizations = { @Authorization(value = "kapuaAccessToken") })
 @Path("{scopeId}/devices/{deviceId}/requests")
 public class DeviceManagementRequests extends AbstractKapuaResource {
 
@@ -97,8 +98,8 @@ public class DeviceManagementRequests extends AbstractKapuaResource {
     @POST
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    @ApiOperation(value = "Sends a request", notes = "Sends a request message to a device", response = DeviceCommandOutput.class)
-    public KapuaResponseMessage<?,?> sendRequest(
+    @ApiOperation(nickname = "deviceRequestSend", value = "Sends a request", notes = "Sends a request message to a device", response = DeviceCommandOutput.class)
+    public GenericResponseMessage sendRequest(
             @ApiParam(value = "The ScopeId of the device", required = true, defaultValue = DEFAULT_SCOPE_ID) @PathParam("scopeId") ScopeId scopeId,
             @ApiParam(value = "The id of the device", required = true) @PathParam("deviceId") EntityId deviceId,
             @ApiParam(value = "The timeout of the request execution") @QueryParam("timeout") Long timeout,

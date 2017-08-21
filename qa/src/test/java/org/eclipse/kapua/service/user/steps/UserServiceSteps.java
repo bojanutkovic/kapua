@@ -57,6 +57,7 @@ import org.eclipse.kapua.service.authorization.permission.shiro.PermissionFactor
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserCreator;
 import org.eclipse.kapua.service.user.UserService;
+import org.eclipse.kapua.service.user.internal.UserCreatorImpl;
 import org.eclipse.kapua.service.user.internal.UserDomain;
 import org.eclipse.kapua.service.user.internal.UserFactoryImpl;
 import org.eclipse.kapua.service.user.internal.UsersJAXBContextProvider;
@@ -111,14 +112,19 @@ public class UserServiceSteps extends AbstractKapuaSteps {
      */
     private StepData stepData;
 
+    private DBHelper database;
+
     @Inject
-    public UserServiceSteps(StepData stepData, /*dependency*/ DBHelper dbHelper) {
+    public UserServiceSteps(StepData stepData, DBHelper dbHelper) {
 
         this.stepData = stepData;
+        this.database = dbHelper;
     }
 
     @Before
     public void beforeScenario(Scenario scenario) throws KapuaException {
+
+        this.database.setup();
 
         // Services by default Locator
         KapuaLocator locator = KapuaLocator.getInstance();
@@ -204,10 +210,29 @@ public class UserServiceSteps extends AbstractKapuaSteps {
         stepData.put("LastUser", tmpUser);
     }
 
+    @Given("^The following users? with full permissions$")
+    public void createFullPermissionUsers(List<TestUser> userList) throws Exception {
+
+        Account account = (Account)stepData.get("LastAccount");
+        createUsersInList(userList, account);
+
+        for (TestUser tmpUsr : userList) {
+            String tmpName = tmpUsr.getName();
+            String tmpPwd = tmpUsr.getPassword();
+
+            assertNotNull(tmpName);
+            assertNotNull(tmpPwd);
+
+            UserCreator usrCr = new UserCreatorImpl(account.getId(), tmpName);
+            //User tmpUsr = userService.create(usrCr);
+            // TODO: Finish this implementation!
+        }
+    }
+
     @When("^I login as user with name \"(.*)\" and password \"(.*)\"$")
     public void loginUser(String userName, String password) throws KapuaException {
 
-        char[] passwd = password.toCharArray();
+        String passwd = password;
         LoginCredentials credentials = new UsernamePasswordCredentialsImpl(userName, passwd);
         authenticationService.logout();
         stepData.put("ExceptionCaught", false);

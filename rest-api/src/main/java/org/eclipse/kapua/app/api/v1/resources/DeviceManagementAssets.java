@@ -19,6 +19,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import io.swagger.annotations.Authorization;
 import org.eclipse.kapua.app.api.v1.resources.model.EntityId;
 import org.eclipse.kapua.app.api.v1.resources.model.ScopeId;
 import org.eclipse.kapua.locator.KapuaLocator;
@@ -33,7 +34,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api("Devices")
+@Api(value = "Devices", authorizations = { @Authorization(value = "kapuaAccessToken") })
 @Path("{scopeId}/devices/{deviceId}/assets")
 public class DeviceManagementAssets extends AbstractKapuaResource {
 
@@ -57,7 +58,7 @@ public class DeviceManagementAssets extends AbstractKapuaResource {
      */
     @GET
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    @ApiOperation(value = "Gets a list of assets", notes = "Returns the list of all the Assets installed on the device.", response = DeviceAssets.class)
+    @ApiOperation(nickname = "deviceAssetGet", value = "Gets a list of assets", notes = "Returns the list of all the Assets installed on the device.", response = DeviceAssets.class)
     public DeviceAssets get(
             @ApiParam(value = "The ScopeId of the device.", required = true, defaultValue = DEFAULT_SCOPE_ID) @PathParam("scopeId") ScopeId scopeId,
             @ApiParam(value = "The id of the device", required = true) @PathParam("deviceId") EntityId deviceId,
@@ -81,7 +82,7 @@ public class DeviceManagementAssets extends AbstractKapuaResource {
      */
     @POST
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    @ApiOperation(value = "Gets a list of assets", notes = "Returns the list of all the Assets installed on the device.", response = DeviceAssets.class)
+    @ApiOperation(nickname = "deviceAssetFilteredGet", value = "Gets a list of assets", notes = "Returns the list of all the Assets installed on the device.", response = DeviceAssets.class)
     public DeviceAssets get(
             @ApiParam(value = "The ScopeId of the device.", required = true, defaultValue = DEFAULT_SCOPE_ID) @PathParam("scopeId") ScopeId scopeId,
             @ApiParam(value = "The id of the device", required = true) @PathParam("deviceId") EntityId deviceId,
@@ -107,7 +108,7 @@ public class DeviceManagementAssets extends AbstractKapuaResource {
     @POST
     @Path("_read")
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    @ApiOperation(value = "Reads asset channel values", notes = "Returns the value read from the asset channel", response = DeviceAssets.class)
+    @ApiOperation(nickname = "deviceAssetRead", value = "Reads asset channel values", notes = "Returns the value read from the asset channel", response = DeviceAssets.class)
     public DeviceAssets read(
             @ApiParam(value = "The ScopeId of the device.", required = true, defaultValue = DEFAULT_SCOPE_ID) @PathParam("scopeId") ScopeId scopeId,
             @ApiParam(value = "The id of the device", required = true) @PathParam("deviceId") EntityId deviceId,
@@ -133,7 +134,7 @@ public class DeviceManagementAssets extends AbstractKapuaResource {
     @POST
     @Path("_write")
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    @ApiOperation(value = "Gets a list of assets", notes = "Returns the list of all the Assets installed on the device.", response = DeviceAssets.class)
+    @ApiOperation(nickname = "deviceAssetWrite", value = "Gets a list of assets", notes = "Returns the list of all the Assets installed on the device.", response = DeviceAssets.class)
     public DeviceAssets write(
             @ApiParam(value = "The ScopeId of the device.", required = true, defaultValue = DEFAULT_SCOPE_ID) @PathParam("scopeId") ScopeId scopeId,
             @ApiParam(value = "The id of the device", required = true) @PathParam("deviceId") EntityId deviceId,

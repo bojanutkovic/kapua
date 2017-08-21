@@ -166,10 +166,10 @@ public abstract class EntityGrid<M extends GwtEntityModel> extends ContentPanel 
         entityLoader.load();
         entityPagingToolbar.enable();
     }
-    
+
     public void setFilterPanel(EntityFilterPanel<M> filterPanel) {
-    	this.filterPanel = filterPanel; 
-    	entityCRUDToolbar.setFilterPanel(filterPanel);
+        this.filterPanel = filterPanel; 
+        entityCRUDToolbar.setFilterPanel(filterPanel);
     }
 
     protected void selectionChangedEvent(M selectedItem) {

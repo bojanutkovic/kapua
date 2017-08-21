@@ -24,6 +24,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import io.swagger.annotations.Authorization;
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.app.api.v1.resources.model.CountResult;
 import org.eclipse.kapua.app.api.v1.resources.model.EntityId;
@@ -47,7 +48,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api("Tags")
+@Api(value = "Tags", authorizations = { @Authorization(value = "kapuaAccessToken") })
 @Path("{scopeId}/tags")
 public class Tags extends AbstractKapuaResource {
 
@@ -71,10 +72,10 @@ public class Tags extends AbstractKapuaResource {
      *             Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
-    @ApiOperation(value = "Gets the Tag list in the scope", //
+    @ApiOperation(nickname = "tagSimpleQuery",
+            value = "Gets the Tag list in the scope", //
             notes = "Returns the list of all the tags associated to the current selected scope.", //
-            response = Tag.class, //
-            responseContainer = "TagListResult")
+            response = TagListResult.class)
     @GET
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public TagListResult simpleQuery(
@@ -108,10 +109,10 @@ public class Tags extends AbstractKapuaResource {
      *             Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
-    @ApiOperation(value = "Queries the Tags", //
+    @ApiOperation(nickname = "tagQuery",
+            value = "Queries the Tags", //
             notes = "Queries the Tags with the given TagQuery parameter returning all matching Tags", //
-            response = Tag.class, //
-            responseContainer = "TagListResult")
+            response = TagListResult.class)
     @POST
     @Path("_query")
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -136,7 +137,8 @@ public class Tags extends AbstractKapuaResource {
      *             Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
-    @ApiOperation(value = "Counts the Tags", //
+    @ApiOperation(nickname = "tagCount",
+            value = "Counts the Tags", //
             notes = "Counts the Tags with the given TagQuery parameter returning the number of matching Tags", //
             response = CountResult.class)
     @POST
@@ -164,7 +166,8 @@ public class Tags extends AbstractKapuaResource {
      *             Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
-    @ApiOperation(value = "Create a Tag", //
+    @ApiOperation(nickname = "createTag",
+            value = "Create a Tag", //
             notes = "Creates a new Tag based on the information provided in TagCreator parameter.", //
             response = Tag.class)
     @POST
@@ -190,7 +193,8 @@ public class Tags extends AbstractKapuaResource {
      *             Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
-    @ApiOperation(value = "Get a Tag", //
+    @ApiOperation(nickname = "tagFind",
+            value = "Get a Tag", //
             notes = "Returns the Tag specified by the \"tagId\" path parameter.", //
             response = Tag.class)
     @GET
@@ -222,7 +226,8 @@ public class Tags extends AbstractKapuaResource {
      *             Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
-    @ApiOperation(value = "Update an Tag", //
+    @ApiOperation(nickname = "tagUpdate",
+            value = "Update a Tag", //
             notes = "Updates a new Tag based on the information provided in the Tag parameter.", //
             response = Tag.class)
     @PUT
@@ -251,7 +256,8 @@ public class Tags extends AbstractKapuaResource {
      *             Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
-    @ApiOperation(value = "Delete an Tag", //
+    @ApiOperation(nickname = "tagDelete",
+            value = "Delete an Tag", //
             notes = "Deletes the Tag specified by the \"tagId\" path parameter.")
     @DELETE
     @Path("{tagId}")

@@ -4,6 +4,7 @@ jdk:
   - oraclejdk8
 
 sudo: false
+dist: trusty
 
 # The cache is stored per-branch
 
@@ -25,6 +26,7 @@ install:
 before_script:
   - export M2_HOME=$PWD/maven
   - export PATH=${M2_HOME}/bin:${PATH}
+  - export MAVEN_OPTS=-Xmx256m
   - hash -r
 
 jobs:
@@ -38,7 +40,7 @@ jobs:
         - $M2_HOME/bin/mvn -B javadoc:jar
     - stage: test
       script:
-        - ./travis.sh $M2_HOME/bin/mvn -B -Dgwt.compiler.localWorkers=2 -Pdev test
+        - ./travis.sh $M2_HOME/bin/mvn -B -Dgwt.compiler.localWorkers=2 -Pdev verify
         - bash <(curl -s https://codecov.io/bash)
 
 # The following upgrades Java during the build in

@@ -28,7 +28,7 @@ public class ConfigurationException extends DatastoreException {
      * @param message
      */
     public ConfigurationException(String message) {
-        super(DatastoreErrorCodes.CONFIGURATION_ERROR, null, message);
+        super(DatastoreErrorCodes.CONFIGURATION_ERROR, message);
     }
 
     /**

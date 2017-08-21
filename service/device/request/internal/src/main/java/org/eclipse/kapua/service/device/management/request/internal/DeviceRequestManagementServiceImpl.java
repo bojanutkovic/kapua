@@ -29,9 +29,7 @@ import org.eclipse.kapua.service.device.management.request.GenericRequestFactory
 import org.eclipse.kapua.service.device.management.request.message.request.GenericRequestChannel;
 import org.eclipse.kapua.service.device.management.request.message.request.GenericRequestMessage;
 import org.eclipse.kapua.service.device.management.request.message.request.GenericRequestPayload;
-import org.eclipse.kapua.service.device.management.response.KapuaResponseChannel;
-import org.eclipse.kapua.service.device.management.response.KapuaResponseMessage;
-import org.eclipse.kapua.service.device.management.response.KapuaResponsePayload;
+import org.eclipse.kapua.service.device.management.request.message.response.GenericResponseMessage;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventCreator;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventService;
@@ -46,7 +44,7 @@ public class DeviceRequestManagementServiceImpl implements DeviceRequestManageme
     private static final GenericRequestFactory FACTORY = LOCATOR.getFactory(GenericRequestFactory.class);
 
     @Override
-    public KapuaResponseMessage<KapuaResponseChannel, KapuaResponsePayload> exec(
+    public GenericResponseMessage exec(
             GenericRequestMessage requestInput,
             Long timeout) throws KapuaException {
         //
@@ -101,8 +99,8 @@ public class DeviceRequestManagementServiceImpl implements DeviceRequestManageme
 
         //
         // Do exec
-        DeviceCallExecutor<?, ?, ?, KapuaResponseMessage<KapuaResponseChannel, KapuaResponsePayload>> deviceApplicationCall = new DeviceCallExecutor<>(genericRequestMessage, timeout);
-        KapuaResponseMessage<KapuaResponseChannel, KapuaResponsePayload> responseMessage = deviceApplicationCall.send();
+        DeviceCallExecutor<?, ?, ?, GenericResponseMessage> deviceApplicationCall = new DeviceCallExecutor<>(genericRequestMessage, timeout);
+        GenericResponseMessage responseMessage = deviceApplicationCall.send();
 
         //
         // Create event

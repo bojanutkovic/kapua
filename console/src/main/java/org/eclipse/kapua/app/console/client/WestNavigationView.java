@@ -289,7 +289,7 @@ public class WestNavigationView extends LayoutContainer {
 
 //                    settingView.refresh();
                 }
-                
+
                 else if ("childaccounts".equals(selectedId)) {
                          AccountView accountView = new AccountView(currentSession);
 
@@ -303,7 +303,7 @@ public class WestNavigationView extends LayoutContainer {
 
                      centerPanel.add(panel);
                      centerPanel.layout();
-                
+
             }
         });
 
@@ -401,12 +401,12 @@ public class WestNavigationView extends LayoutContainer {
                 cloudResourcesTreeStore.add(newItem("role", MSGS.roles(), IconSet.STREET_VIEW), false);
             }
             if (currentSession.hasAccountReadPermission()) {
-            	cloudResourcesTreeStore.add(newItem("childaccounts", MSGS.childaccounts(), IconSet.SITEMAP), false);
+                cloudResourcesTreeStore.add(newItem("childaccounts", MSGS.childaccounts(), IconSet.SITEMAP), false);
             }
             if (currentSession.hasAccountReadPermission()) {
                 cloudResourcesTreeStore.add(newItem("mysettings", MSGS.settings(), IconSet.COG), false);
             }
-            
+
             cloudResourcesTreeStore.add(newItem("about", MSGS.about(), IconSet.INFO), false);
         }
 

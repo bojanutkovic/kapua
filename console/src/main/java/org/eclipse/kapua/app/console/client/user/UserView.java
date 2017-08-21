@@ -48,7 +48,7 @@ public class UserView extends EntityView<GwtUser> {
         }
         if (accessRoleTab == null) {
             accessRoleTab = new UserTabItemAccessRole(currentSession);
-            
+
             tabs.add(accessRoleTab);
         }
         if (permissionTab == null) {

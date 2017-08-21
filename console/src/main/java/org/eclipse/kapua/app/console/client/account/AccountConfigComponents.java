@@ -108,7 +108,7 @@ public class AccountConfigComponents extends LayoutContainer {
     private AccountConfigPanel devConfPanel;
     private BorderLayoutData centerData;
     private AccountDetailsView accountDetailsView;
-    private  AccountDetailsTabDescription accountDetailsTabDescription;
+    private AccountDetailsTabDescription accountDetailsTabDescription;
 
     @SuppressWarnings("rawtypes")
     private BaseTreeLoader loader;
@@ -298,7 +298,7 @@ public class AccountConfigComponents extends LayoutContainer {
 
                 final GwtConfigComponent componentToSwitchTo = (GwtConfigComponent) se.getModel();
                 if (devConfPanel != null && devConfPanel.isDirty()) {
-                	accountDetailsTabDescription.updateAccountInfo();
+                    accountDetailsTabDescription.updateAccountInfo();
                     // cancel the event first
                     be.setCancelled(true);
 
@@ -326,10 +326,10 @@ public class AccountConfigComponents extends LayoutContainer {
                                 }
                             });
                 } else {
-                	
+
                     refreshConfigPanel(componentToSwitchTo);
                     if (accountDetailsTabDescription != null) {
-                    	 accountDetailsTabDescription.updateAccountInfo();
+                        accountDetailsTabDescription.updateAccountInfo();
                     }
 
                     // this is needed to select the item in the Tree
@@ -531,9 +531,9 @@ public class AccountConfigComponents extends LayoutContainer {
             return label.getText();
         }
     };
-    
+
     public void setDescriptionTab(AccountDetailsTabDescription accountDetailsTabDescription) {
-    	this.accountDetailsTabDescription = accountDetailsTabDescription;
+        this.accountDetailsTabDescription = accountDetailsTabDescription;
     }
 
     // --------------------------------------------------------------------------------------

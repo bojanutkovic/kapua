@@ -83,11 +83,6 @@ public class DeviceForm extends Window {
     private TextField<String> displayNameField;
     private SimpleComboBox<GwtDeviceQueryPredicates.GwtDeviceStatus> statusCombo;
 
-    // Security Options fields
-    // private SimpleComboBox<String> credentialsTightCombo;
-    // private ComboBox<GwtUser> deviceUserCombo;
-    // private CheckBox allowCredentialsChangeCheckbox;
-
     // Custom attributes
     private TextField<String> customAttribute1Field;
     private TextField<String> customAttribute2Field;
@@ -227,62 +222,6 @@ public class DeviceForm extends Window {
         FormLayout layoutSecurityOptions = new FormLayout();
         layoutSecurityOptions.setLabelWidth(Constants.LABEL_WIDTH_DEVICE_FORM);
 
-        // FieldSet fieldSetSecurityOptions = new FieldSet();
-        // fieldSetSecurityOptions.setLayout(layoutSecurityOptions);
-        // fieldSetSecurityOptions.setHeading(MSGS.deviceFormFieldsetSecurityOptions());
-
-        // Provisioned Credentials Tight
-        // credentialsTightCombo = new SimpleComboBox<String>();
-        // credentialsTightCombo.setName("provisionedCredentialsTight");
-        // credentialsTightCombo.setEditable(false);
-        // credentialsTightCombo.setTypeAhead(false);
-        // credentialsTightCombo.setAllowBlank(false);
-        // credentialsTightCombo.setFieldLabel(MSGS.deviceFormProvisionedCredentialsTight());
-        // credentialsTightCombo.setToolTip(MSGS.deviceFormProvisionedCredentialsTightTooltip());
-        // credentialsTightCombo.setTriggerAction(TriggerAction.ALL);
-
-        // fieldSetSecurityOptions.add(credentialsTightCombo, formData);
-
-        // credentialsTightCombo.add(GwtDeviceCredentialsTight.INHERITED.getLabel());
-        // credentialsTightCombo.add(GwtDeviceCredentialsTight.LOOSE.getLabel());
-        // credentialsTightCombo.add(GwtDeviceCredentialsTight.STRICT.getLabel());
-        //
-        // credentialsTightCombo.setSimpleValue(GwtDeviceCredentialsTight.INHERITED.getLabel());
-
-        // Device User
-        // RpcProxy<ListLoadResult<GwtUser>> deviceUserProxy = new RpcProxy<ListLoadResult<GwtUser>>() {
-        // @Override
-        // protected void load(Object loadConfig, AsyncCallback<ListLoadResult<GwtUser>> callback)
-        // {
-        // gwtUserService.findAll(m_currentSession.getSelectedAccount().getId(),
-        // callback);
-        // }
-        // };
-
-        // BaseListLoader<ListLoadResult<GwtUser>> deviceUserLoader = new BaseListLoader<ListLoadResult<GwtUser>>(deviceUserProxy);
-        // ListStore<GwtUser> deviceUserStore = new ListStore<GwtUser>(deviceUserLoader);
-
-        // deviceUserCombo = new ComboBox<GwtUser>();
-        // deviceUserCombo.setName("deviceUserCombo");
-        // deviceUserCombo.setEditable(false);
-        // deviceUserCombo.setTypeAhead(false);
-        // deviceUserCombo.setAllowBlank(false);
-        // deviceUserCombo.setFieldLabel(MSGS.deviceFormDeviceUser());
-        // deviceUserCombo.setTriggerAction(TriggerAction.ALL);
-        // deviceUserCombo.setStore(deviceUserStore);
-        // deviceUserCombo.setDisplayField("username");
-        // deviceUserCombo.setValueField("id");
-        // fieldSetSecurityOptions.add(deviceUserCombo, formData);
-
-        // Allow credential change
-        // allowCredentialsChangeCheckbox = new CheckBox();
-        // allowCredentialsChangeCheckbox.setName("allowNewUnprovisionedDevicesCheckbox");
-        // allowCredentialsChangeCheckbox.setFieldLabel(MSGS.deviceFormAllowCredentialsChange());
-        // allowCredentialsChangeCheckbox.setToolTip(MSGS.deviceFormAllowCredentialsChangeTooltip());
-        // allowCredentialsChangeCheckbox.setBoxLabel("");
-        // allowCredentialsChangeCheckbox.hide();
-        // fieldSetSecurityOptions.add(allowCredentialsChangeCheckbox, formData);
-
         // Device Custom attributes fieldset
         FieldSet fieldSetCustomAttributes = new FieldSet();
         FormLayout layoutCustomAttributes = new FormLayout();
@@ -297,7 +236,7 @@ public class DeviceForm extends Window {
         customAttribute1Field.setFieldLabel(MSGS.deviceFormCustomAttribute1());
         customAttribute1Field.setWidth(225);
         fieldSetCustomAttributes.add(customAttribute1Field, formData);
- 
+
         // Custom Attribute #2
         customAttribute2Field = new TextField<String>();
         customAttribute2Field.setName("customAttribute2");
@@ -305,7 +244,7 @@ public class DeviceForm extends Window {
         customAttribute2Field.setFieldLabel(MSGS.deviceFormCustomAttribute2());
         customAttribute2Field.setWidth(225);
         fieldSetCustomAttributes.add(customAttribute2Field, formData);
- 
+
         // Custom Attribute #3
         customAttribute3Field = new TextField<String>();
         customAttribute3Field.setName("customAttribute3");
@@ -313,7 +252,7 @@ public class DeviceForm extends Window {
         customAttribute3Field.setFieldLabel(MSGS.deviceFormCustomAttribute3());
         customAttribute3Field.setWidth(225);
         fieldSetCustomAttributes.add(customAttribute3Field, formData);
- 
+
         // Custom Attribute #4
         customAttribute4Field = new TextField<String>();
         customAttribute4Field.setName("customAttribute4");
@@ -321,7 +260,7 @@ public class DeviceForm extends Window {
         customAttribute4Field.setFieldLabel(MSGS.deviceFormCustomAttribute4());
         customAttribute4Field.setWidth(225);
         fieldSetCustomAttributes.add(customAttribute4Field, formData);
- 
+
         // Custom Attribute #5
         customAttribute5Field = new TextField<String>();
         customAttribute5Field.setName("customAttribute5");

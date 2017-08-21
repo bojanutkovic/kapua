@@ -24,6 +24,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import io.swagger.annotations.Authorization;
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.app.api.v1.resources.model.CountResult;
 import org.eclipse.kapua.app.api.v1.resources.model.EntityId;
@@ -46,7 +47,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api("Roles")
+@Api(value = "Roles", authorizations = { @Authorization(value = "kapuaAccessToken") })
 @Path("{scopeId}/roles")
 public class Roles extends AbstractKapuaResource {
 
@@ -70,7 +71,7 @@ public class Roles extends AbstractKapuaResource {
      *             Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
-    @ApiOperation(value = "Gets the Role list in the scope", notes = "Returns the list of all the roles associated to the current selected scope.", response = Role.class, responseContainer = "RoleListResult")
+    @ApiOperation(nickname = "roleSimpleQuery", value = "Gets the Role list in the scope", notes = "Returns the list of all the roles associated to the current selected scope.", response = RoleListResult.class)
     @GET
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public RoleListResult simpleQuery(
@@ -104,7 +105,7 @@ public class Roles extends AbstractKapuaResource {
      *             Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
-    @ApiOperation(value = "Queries the Roles", notes = "Queries the Roles with the given RoleQuery parameter returning all matching Roles", response = Role.class, responseContainer = "RoleListResult")
+    @ApiOperation(nickname = "roleQuery", value = "Queries the Roles", notes = "Queries the Roles with the given RoleQuery parameter returning all matching Roles", response = RoleListResult.class)
     @POST
     @Path("_query")
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -129,7 +130,7 @@ public class Roles extends AbstractKapuaResource {
      *             Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
-    @ApiOperation(value = "Counts the Roles", notes = "Counts the Roles with the given RoleQuery parameter returning the number of matching Roles", response = CountResult.class)
+    @ApiOperation(nickname = "roleCount", value = "Counts the Roles", notes = "Counts the Roles with the given RoleQuery parameter returning the number of matching Roles", response = CountResult.class)
     @POST
     @Path("_count")
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -155,7 +156,7 @@ public class Roles extends AbstractKapuaResource {
      *             Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
-    @ApiOperation(value = "Create a Role", notes = "Creates a new Role based on the information provided in RoleCreator parameter.", response = Role.class)
+    @ApiOperation(nickname = "roleCreate", value = "Create a Role", notes = "Creates a new Role based on the information provided in RoleCreator parameter.", response = Role.class)
     @POST
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -179,7 +180,7 @@ public class Roles extends AbstractKapuaResource {
      *             Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
-    @ApiOperation(value = "Get a Role", notes = "Returns the Role specified by the \"roleId\" path parameter.", response = Role.class)
+    @ApiOperation(nickname = "roleFind", value = "Get a Role", notes = "Returns the Role specified by the \"roleId\" path parameter.", response = Role.class)
     @GET
     @Path("{roleId}")
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -209,7 +210,7 @@ public class Roles extends AbstractKapuaResource {
      *             Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
-    @ApiOperation(value = "Update an Role", notes = "Updates a new Role based on the information provided in the Role parameter.", response = Role.class)
+    @ApiOperation(nickname = "roleUpdate", value = "Update an Role", notes = "Updates a new Role based on the information provided in the Role parameter.", response = Role.class)
     @PUT
     @Path("{roleId}")
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -236,7 +237,7 @@ public class Roles extends AbstractKapuaResource {
      *             Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
-    @ApiOperation(value = "Delete a Role", notes = "Deletes the Role specified by the \"roleId\" path parameter.")
+    @ApiOperation(nickname = "roleDelete", value = "Delete a Role", notes = "Deletes the Role specified by the \"roleId\" path parameter.")
     @DELETE
     @Path("{roleId}")
     public Response deleteRole(

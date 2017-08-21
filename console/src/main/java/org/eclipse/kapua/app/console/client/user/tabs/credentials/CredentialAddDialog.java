@@ -12,8 +12,7 @@
 package org.eclipse.kapua.app.console.client.user.tabs.credentials;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
-import org.eclipse.kapua.app.console.client.messages.ConsoleCredentialMessages;import org.eclipse.kapua.app.console.client.resources.icons.IconSet;
-import org.eclipse.kapua.app.console.client.resources.icons.KapuaIcon;
+import org.eclipse.kapua.app.console.client.messages.ConsoleCredentialMessages;
 import org.eclipse.kapua.app.console.client.ui.dialog.entity.EntityAddEditDialog;
 import org.eclipse.kapua.app.console.client.ui.panel.FormPanel;
 import org.eclipse.kapua.app.console.client.util.ConfirmPasswordFieldValidator;

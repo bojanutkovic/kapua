@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2011, 2017 Eurotech and/or its affiliates and others
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Eurotech - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.kapua.app.console.client.account;
 
 import java.util.ArrayList;
@@ -41,10 +52,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class AccountDetailsTabDescription extends KapuaTabItem<GwtAccount>{
-	
-	
-	private static final ConsoleMessages MSGS = GWT.create(ConsoleMessages.class);
+public class AccountDetailsTabDescription extends KapuaTabItem<GwtAccount> {
+
+private static final ConsoleMessages MSGS = GWT.create(ConsoleMessages.class);
     private GwtAccountServiceAsync gwtAccountService = GWT.create(GwtAccountService.class);
 
     private AccountView centerAccountView;
@@ -61,28 +71,27 @@ public class AccountDetailsTabDescription extends KapuaTabItem<GwtAccount>{
     private GwtSession currentSession;
     private AccountDetailsView accoountDetailsView;
     private ToolBar accountsToolBar;
-    
-    public AccountDetailsTabDescription(GwtSession currentSession, AccountDetailsView accoountDetailsView,  AccountView centerAccountView) {
-    	super(MSGS.entityTabDescriptionTitle(), new KapuaIcon(IconSet.INFO));
-    	this.currentSession = currentSession;
-    	this.accoountDetailsView = accoountDetailsView;
-    	this.centerAccountView = centerAccountView;
-    	
-	}
-    
+
+    public AccountDetailsTabDescription(GwtSession currentSession, AccountDetailsView accoountDetailsView, AccountView centerAccountView) {
+        super(MSGS.entityTabDescriptionTitle(), new KapuaIcon(IconSet.INFO));
+        this.currentSession = currentSession;
+        this.accoountDetailsView = accoountDetailsView;
+        this.centerAccountView = centerAccountView;
+
+    }
+
     @Override
     protected void onRender(Element parent, int index) {
-    	super.onRender(parent, index);
-    	setLayout(new FitLayout());
+        super.onRender(parent, index);
+        setLayout(new FitLayout());
         setBorders(false);
         initTable();
-       
-        
+
     }
-    
-    protected void initTable() { 	
-    	getAccountsToolBar();
-    	initGrid(); 
+
+    protected void initTable() {
+        getAccountsToolBar();
+        initGrid(); 
 
         tableContainer = new ContentPanel();
         tableContainer.setBorders(false);
@@ -93,12 +102,11 @@ public class AccountDetailsTabDescription extends KapuaTabItem<GwtAccount>{
         tableContainer.setLayout(new FitLayout());
         tableContainer.add(grid);
         add(tableContainer);
-       
-    	
+
     }
-    
+
     private void initGrid() {
-    	RpcProxy<ListLoadResult<GwtGroupedNVPair>> proxy = new RpcProxy<ListLoadResult<GwtGroupedNVPair>>() {
+        RpcProxy<ListLoadResult<GwtGroupedNVPair>> proxy = new RpcProxy<ListLoadResult<GwtGroupedNVPair>>() {
 
             @Override
             protected void load(Object loadConfig, final AsyncCallback<ListLoadResult<GwtGroupedNVPair>> callback) {
@@ -135,18 +143,16 @@ public class AccountDetailsTabDescription extends KapuaTabItem<GwtAccount>{
 
         add(grid);
     }
-	
-    
+
     protected void updateAccountInfo() {
-    	if (store != null) 
-    	{
-        store.removeAll();
-        loader.load();
-    	}
+        if (store != null) {
+            store.removeAll();
+            loader.load();
+        }
     }
-    
+
     private ToolBar getAccountsToolBar() {
-    
+
        accountsToolBar = new ToolBar();
       accountsToolBar.setHeight("27px");
       if (currentSession.hasAccountUpdatePermission()) {
@@ -181,7 +187,7 @@ public class AccountDetailsTabDescription extends KapuaTabItem<GwtAccount>{
       }
       return accountsToolBar;
   }
-    
+
     public void refresh() {
       if (initialized && dirty && selectedAccount != null) {
           updateAccountInfo();
@@ -198,13 +204,13 @@ public class AccountDetailsTabDescription extends KapuaTabItem<GwtAccount>{
           }
           editButton.setEnabled(false);
       }
-      
+
   }
-    
+
     public void setAccount(GwtAccount selectedAccount) {
         this.selectedAccount = selectedAccount;
     }
-    
+
     private class DataLoadListener extends KapuaLoadListener {
 
         public DataLoadListener() {
@@ -217,10 +223,10 @@ public class AccountDetailsTabDescription extends KapuaTabItem<GwtAccount>{
         }
     }
 
-	@Override
-	protected void doRefresh() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    protected void doRefresh() {
+        // TODO Auto-generated method stub
+
+    }
 
 }

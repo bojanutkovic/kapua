@@ -43,7 +43,6 @@ import org.eclipse.kapua.app.console.shared.model.authorization.GwtRole;
 import org.eclipse.kapua.app.console.shared.model.authorization.GwtRoleCreator;
 import org.eclipse.kapua.app.console.shared.model.authorization.GwtRolePermission;
 import org.eclipse.kapua.app.console.shared.model.authorization.GwtRoleQuery;
-import org.eclipse.kapua.app.console.shared.model.connection.GwtDeviceConnection;
 import org.eclipse.kapua.app.console.shared.model.connection.GwtDeviceConnectionQuery;
 import org.eclipse.kapua.app.console.shared.model.data.GwtDataChannelInfoQuery;
 import org.eclipse.kapua.app.console.shared.model.device.management.assets.GwtDeviceAsset;
@@ -285,9 +284,9 @@ public class GwtKapuaModelConverter {
         if (gwtDeviceConnectionQuery.getConnectionStatus() != null && !gwtDeviceConnectionQuery.getConnectionStatus().equals(GwtDeviceConnectionStatus.ANY.toString())) {
             predicate.and(new AttributePredicate<DeviceConnectionStatus>("status", convertConnectionStatus(gwtDeviceConnectionQuery.getConnectionStatus()), Operator.EQUAL));
         }
-        
+
         if (gwtDeviceConnectionQuery.getClientIP() != null && !gwtDeviceConnectionQuery.getClientIP().trim().isEmpty()) {
-        	predicate.and(new AttributePredicate<String>("clientIp", gwtDeviceConnectionQuery.getClientIP(), Operator.LIKE));
+            predicate.and(new AttributePredicate<String>("clientIp", gwtDeviceConnectionQuery.getClientIP(), Operator.LIKE));
         }
 
         query.setPredicate(predicate);

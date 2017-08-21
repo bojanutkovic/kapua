@@ -19,6 +19,7 @@ import org.eclipse.kapua.app.console.server.util.KapuaExceptionHandler;
 import org.eclipse.kapua.app.console.shared.GwtKapuaException;
 import org.eclipse.kapua.app.console.shared.model.GwtGroupedNVPair;
 import org.eclipse.kapua.app.console.shared.model.connection.GwtDeviceConnection;
+import org.eclipse.kapua.app.console.shared.model.connection.GwtDeviceConnection.GwtConnectionUserCouplingMode;
 import org.eclipse.kapua.app.console.shared.model.connection.GwtDeviceConnectionQuery;
 import org.eclipse.kapua.app.console.shared.service.GwtDeviceConnectionService;
 import org.eclipse.kapua.app.console.shared.util.GwtKapuaModelConverter;
@@ -117,14 +118,21 @@ public class GwtDeviceConnectionServiceImpl extends KapuaRemoteServiceServlet im
             deviceConnectionPropertiesPairs.add(new GwtGroupedNVPair("connectionInfo", "connectionProtocol", deviceConnection.getProtocol()));
             deviceConnectionPropertiesPairs.add(new GwtGroupedNVPair("connectionInfo", "connectionClientId", deviceConnection.getClientId()));
 
-            if (user != null) {
-                deviceConnectionPropertiesPairs.add(new GwtGroupedNVPair("connectionInfo", "connectionUser", user.getName()));
-                }
+            GwtConnectionUserCouplingMode gwtConnectionUserCouplingMode = null;
+            if (deviceConnection.getUserCouplingMode() != null) {
+                gwtConnectionUserCouplingMode = GwtConnectionUserCouplingMode.valueOf(deviceConnection.getUserCouplingMode().name());
+            }
+            deviceConnectionPropertiesPairs.add(new GwtGroupedNVPair("Connection-user bound Informations", "Connection-user bound", gwtConnectionUserCouplingMode.getLabel()));
+            deviceConnectionPropertiesPairs.add(new GwtGroupedNVPair("Connection-user bound Informations", "Reserved User Id",
+                    deviceConnection.getReservedUserId() != null ? deviceConnection.getReservedUserId().toCompactId() : "N/A"));
+            deviceConnectionPropertiesPairs.add(new GwtGroupedNVPair("Connection-user bound Informations", "Allow user change", deviceConnection.getAllowUserChange()));
 
-            deviceConnectionPropertiesPairs.add(new GwtGroupedNVPair("connectionInfo", "connectionClientIp", deviceConnection.getClientIp()));
-            deviceConnectionPropertiesPairs.add(new GwtGroupedNVPair("connectionInfo", "connectionServerIp", deviceConnection.getServerIp()));           
-            deviceConnectionPropertiesPairs.add(new GwtGroupedNVPair("connectionInfo", "connectionFirstEstablishedOn", deviceConnection.getCreatedOn().toString()));
-            deviceConnectionPropertiesPairs.add(new GwtGroupedNVPair("connectionInfo", "connectionFirstEstablishedBy", deviceConnection.getCreatedBy().toCompactId()));
+            deviceConnectionPropertiesPairs.add(new GwtGroupedNVPair("Connection Informations", "Client Id", deviceConnection.getClientId()));
+            deviceConnectionPropertiesPairs.add(new GwtGroupedNVPair("Connection Informations", "User Id", deviceConnection.getUserId().toCompactId()));
+            deviceConnectionPropertiesPairs.add(new GwtGroupedNVPair("Connection Informations", "Client IP", deviceConnection.getClientIp()));
+            deviceConnectionPropertiesPairs.add(new GwtGroupedNVPair("Connection Informations", "Server IP", deviceConnection.getServerIp()));
+            deviceConnectionPropertiesPairs.add(new GwtGroupedNVPair("Connection Informations", "Protocol", deviceConnection.getProtocol()));
+            deviceConnectionPropertiesPairs.add(new GwtGroupedNVPair("Connection Informations", "Connection Status", deviceConnection.getStatus().toString()));
         } catch (Throwable t) {
             KapuaExceptionHandler.handle(t);
         }

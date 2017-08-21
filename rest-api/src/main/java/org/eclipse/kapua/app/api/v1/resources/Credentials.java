@@ -24,6 +24,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import io.swagger.annotations.Authorization;
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.app.api.v1.resources.model.CountResult;
 import org.eclipse.kapua.app.api.v1.resources.model.EntityId;
@@ -44,7 +45,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api("Credentials")
+@Api(value = "Credentials", authorizations = { @Authorization(value = "kapuaAccessToken") })
 @Path("{scopeId}/credentials")
 public class Credentials extends AbstractKapuaResource {
 
@@ -66,7 +67,7 @@ public class Credentials extends AbstractKapuaResource {
      *             Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
-    @ApiOperation(value = "Gets the Credential list in the scope", notes = "Returns the list of all the credentials associated to the current selected scope.", response = Credential.class, responseContainer = "CredentialListResult")
+    @ApiOperation(nickname = "credentialSimpleQuery", value = "Gets the Credential list in the scope", notes = "Returns the list of all the credentials associated to the current selected scope.", response = CredentialListResult.class)
     @GET
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public CredentialListResult simpleQuery(
@@ -100,7 +101,7 @@ public class Credentials extends AbstractKapuaResource {
      *             Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
-    @ApiOperation(value = "Queries the Credentials", notes = "Queries the Credentials with the given CredentialQuery parameter returning all matching Credentials", response = Credential.class, responseContainer = "CredentialListResult")
+    @ApiOperation(nickname = "credentialQuery", value = "Queries the Credentials", notes = "Queries the Credentials with the given CredentialQuery parameter returning all matching Credentials", response = CredentialListResult.class)
     @POST
     @Path("_query")
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -125,7 +126,7 @@ public class Credentials extends AbstractKapuaResource {
      *             Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
-    @ApiOperation(value = "Counts the Credentials", notes = "Counts the Credentials with the given CredentialQuery parameter returning the number of matching Credentials", response = CountResult.class)
+    @ApiOperation(nickname = "credentialCount", value = "Counts the Credentials", notes = "Counts the Credentials with the given CredentialQuery parameter returning the number of matching Credentials", response = CountResult.class)
     @POST
     @Path("_count")
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -151,7 +152,7 @@ public class Credentials extends AbstractKapuaResource {
      *             Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
-    @ApiOperation(value = "Create a Credential", notes = "Creates a new Credential based on the information provided in CredentialCreator parameter.", response = Credential.class)
+    @ApiOperation(nickname = "credentialCreate", value = "Create a Credential", notes = "Creates a new Credential based on the information provided in CredentialCreator parameter.", response = Credential.class)
     @POST
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -175,7 +176,7 @@ public class Credentials extends AbstractKapuaResource {
      *             Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
-    @ApiOperation(value = "Get a Credential", notes = "Returns the Credential specified by the \"credentialId\" path parameter.", response = Credential.class)
+    @ApiOperation(nickname = "credentialFind", value = "Get a Credential", notes = "Returns the Credential specified by the \"credentialId\" path parameter.", response = Credential.class)
     @GET
     @Path("{credentialId}")
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -201,7 +202,7 @@ public class Credentials extends AbstractKapuaResource {
      *             Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
-    @ApiOperation(value = "Update an Credential", notes = "Updates a new Credential based on the information provided in the Credential parameter.", response = Credential.class)
+    @ApiOperation(nickname = "credentialUpdate", value = "Update an Credential", notes = "Updates a new Credential based on the information provided in the Credential parameter.", response = Credential.class)
     @PUT
     @Path("{credentialId}")
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -226,7 +227,7 @@ public class Credentials extends AbstractKapuaResource {
      *             Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
-    @ApiOperation(value = "Delete a Credential", notes = "Deletes the Credential specified by the \"credentialId\" path parameter.")
+    @ApiOperation(nickname = "credentialDelete", value = "Delete a Credential", notes = "Deletes the Credential specified by the \"credentialId\" path parameter.")
     @DELETE
     @Path("{credentialId}")
     public Response deleteCredential(

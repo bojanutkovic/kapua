@@ -18,9 +18,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import io.swagger.annotations.ApiModelProperty;
 import org.eclipse.kapua.model.KapuaUpdatableEntity;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.service.device.registry.ConnectionUserCouplingMode;
 
 /**
  * Device connection entity definition.
@@ -29,9 +31,13 @@ import org.eclipse.kapua.model.id.KapuaIdAdapter;
  */
 @XmlRootElement(name = "deviceConnection")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(propOrder = { "status",
+@XmlType(propOrder = {
+        "status",
         "clientId",
         "userId",
+        "allowUserChange",
+        "userCouplingMode",
+        "reservedUserId",
         "protocol",
         "clientIp",
         "serverIp" }, //
@@ -82,6 +88,7 @@ public interface DeviceConnection extends KapuaUpdatableEntity {
      */
     @XmlElement(name = "userId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @ApiModelProperty(dataType = "string")
     public KapuaId getUserId();
 
     /**
@@ -90,6 +97,53 @@ public interface DeviceConnection extends KapuaUpdatableEntity {
      * @param userId
      */
     public void setUserId(KapuaId userId);
+
+    /**
+     * Gets whether or not the {@link DeviceConnection} can change user on the next login.
+     * 
+     * @return <code>true</code> if device can changhe user to connect, <code>false</code> if not.
+     */
+    @XmlElement(name = "allowUserChange")
+    public boolean getAllowUserChange();
+
+    /**
+     * Sets whether or not the {@link DeviceConnection} can change user on the next login.
+     * 
+     * @param allowUserChange
+     */
+    public void setAllowUserChange(boolean allowUserChange);
+
+    /**
+     * Get the device connection user coupling mode.
+     *
+     * @return
+     */
+    @XmlElement(name = "userCouplingMode")
+    public ConnectionUserCouplingMode getUserCouplingMode();
+
+    /**
+     * Set the device connection user coupling mode.
+     *
+     * @param userCouplingMode
+     */
+    public void setUserCouplingMode(ConnectionUserCouplingMode userCouplingMode);
+
+    /**
+     * Get the reserved user identifier
+     *
+     * @return
+     */
+    @XmlElement(name = "reservedUserId")
+    @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @ApiModelProperty(dataType = "string")
+    public KapuaId getReservedUserId();
+
+    /**
+     * Set the reserved user identifier
+     *
+     * @param reservedUserId
+     */
+    public void setReservedUserId(KapuaId reservedUserId);
 
     /**
      * Get the device protocol

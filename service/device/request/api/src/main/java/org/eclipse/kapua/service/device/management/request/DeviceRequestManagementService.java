@@ -14,9 +14,7 @@ package org.eclipse.kapua.service.device.management.request;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.device.management.request.message.request.GenericRequestMessage;
-import org.eclipse.kapua.service.device.management.response.KapuaResponseChannel;
-import org.eclipse.kapua.service.device.management.response.KapuaResponseMessage;
-import org.eclipse.kapua.service.device.management.response.KapuaResponsePayload;
+import org.eclipse.kapua.service.device.management.request.message.response.GenericResponseMessage;
 
 public interface DeviceRequestManagementService extends KapuaService {
     /**
@@ -30,6 +28,6 @@ public interface DeviceRequestManagementService extends KapuaService {
      *
      * @throws KapuaException
      */
-     KapuaResponseMessage<KapuaResponseChannel, KapuaResponsePayload> exec(GenericRequestMessage requestInput, Long timeout)
+     GenericResponseMessage exec(GenericRequestMessage requestInput, Long timeout)
             throws KapuaException;
 }

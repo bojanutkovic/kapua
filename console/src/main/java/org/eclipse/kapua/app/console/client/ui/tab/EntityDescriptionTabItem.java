@@ -73,15 +73,14 @@ public abstract class EntityDescriptionTabItem<M extends GwtEntityModel> extends
             @Override
             public Object render(GwtGroupedNVPair model, String property, ColumnData config, int rowIndex, int colIndex, ListStore<GwtGroupedNVPair> store, Grid<GwtGroupedNVPair> grid) {
                Object value = model.getValue();
-			return value;
+               return value;
             }
         };
 
-      
         value.setRenderer(renderer);
         columns.add(name);
         columns.add(value);
-        
+
         ColumnModel cm = new ColumnModel(columns);
 
         //

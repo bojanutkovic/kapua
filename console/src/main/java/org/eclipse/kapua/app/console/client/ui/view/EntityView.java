@@ -54,7 +54,7 @@ public abstract class EntityView<M extends GwtEntityModel> extends LayoutContain
     protected void onRender(final Element parent, int index) {
 
         super.onRender(parent, index);
-        
+
         LayoutContainer layoutContainer = new LayoutContainer();
         layoutContainer.setBorders(false);
         layoutContainer.setLayout(new BorderLayout());

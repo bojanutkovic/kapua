@@ -21,6 +21,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import io.swagger.annotations.Authorization;
 import org.eclipse.kapua.app.api.v1.resources.model.CountResult;
 import org.eclipse.kapua.app.api.v1.resources.model.ScopeId;
 import org.eclipse.kapua.app.api.v1.resources.model.StorableEntityId;
@@ -42,7 +43,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api("Data Clients")
+@Api(value = "Data Clients", authorizations = { @Authorization(value = "kapuaAccessToken") })
 @Path("{scopeId}/data/clients")
 public class DataClients extends AbstractKapuaResource {
 
@@ -67,10 +68,10 @@ public class DataClients extends AbstractKapuaResource {
      *             Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
-    @ApiOperation(value = "Gets the ClientInfo list in the scope", //
+    @ApiOperation(nickname = "dataClientSimpleQuery",
+            value = "Gets the ClientInfo list in the scope", //
             notes = "Returns the list of all the clientInfos associated to the current selected scope.", //
-            response = ClientInfo.class, //
-            responseContainer = "ClientInfoListResult")
+            response = ClientInfoListResult.class)
     @GET
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public ClientInfoListResult simpleQuery( //
@@ -110,10 +111,10 @@ public class DataClients extends AbstractKapuaResource {
     @Path("_query")
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    @ApiOperation(value = "Queries the ClientInfos", //
+    @ApiOperation(nickname = "dataClientQuery",
+            value = "Queries the ClientInfos", //
             notes = "Queries the ClientInfos with the given ClientInfoQuery parameter returning all matching ClientInfos",  //
-            response = ClientInfo.class, //
-            responseContainer = "ClientInfoListResult")  //
+            response = ClientInfoListResult.class)  //
     public ClientInfoListResult query( //
             @ApiParam(value = "The ScopeId in which to search results", required = true, defaultValue = DEFAULT_SCOPE_ID) @PathParam("scopeId") ScopeId scopeId, //
             @ApiParam(value = "The ClientInfoQuery to use to filter results", required = true) ClientInfoQuery query) throws Exception {
@@ -138,7 +139,8 @@ public class DataClients extends AbstractKapuaResource {
     @Path("_count")
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    @ApiOperation(value = "Counts the ClientInfos", //
+    @ApiOperation(nickname = "dataClientCount",
+            value = "Counts the ClientInfos", //
             notes = "Counts the ClientInfos with the given ClientInfoQuery parameter returning the number of matching ClientInfos", //
             response = CountResult.class)
     public CountResult count( //
@@ -162,7 +164,8 @@ public class DataClients extends AbstractKapuaResource {
     @GET
     @Path("{clientInfoId}")
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    @ApiOperation(value = "Gets an ClientInfo", //
+    @ApiOperation(nickname = "dataClientFind",
+            value = "Gets an ClientInfo", //
             notes = "Gets the ClientInfo specified by the clientInfoId path parameter", //
             response = ClientInfo.class)
     public ClientInfo find( //

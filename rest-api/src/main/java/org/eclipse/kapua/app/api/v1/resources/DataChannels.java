@@ -21,6 +21,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import io.swagger.annotations.Authorization;
 import org.eclipse.kapua.app.api.v1.resources.model.CountResult;
 import org.eclipse.kapua.app.api.v1.resources.model.ScopeId;
 import org.eclipse.kapua.app.api.v1.resources.model.StorableEntityId;
@@ -45,7 +46,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api("Data Channels")
+@Api(value = "Data Channels", authorizations = { @Authorization(value = "kapuaAccessToken") })
 @Path("{scopeId}/data/channels")
 public class DataChannels extends AbstractKapuaResource {
 
@@ -72,10 +73,10 @@ public class DataChannels extends AbstractKapuaResource {
      *             Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
-    @ApiOperation(value = "Gets the ChannelInfo list in the scope", //
+    @ApiOperation(nickname = "dataChannelSimpleQuery",
+            value = "Gets the ChannelInfo list in the scope", //
             notes = "Returns the list of all the channelInfos associated to the current selected scope.", //
-            response = ChannelInfo.class, //
-            responseContainer = "ChannelInfoListResult")
+            response = ChannelInfoListResult.class)
     @GET
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public ChannelInfoListResult simpleQuery( //
@@ -119,10 +120,10 @@ public class DataChannels extends AbstractKapuaResource {
     @Path("_query")
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    @ApiOperation(value = "Queries the ChannelInfos", //
+    @ApiOperation(nickname = "dataChannelQuery",
+            value = "Queries the ChannelInfos", //
             notes = "Queries the ChannelInfos with the given ChannelInfoQuery parameter returning all matching ChannelInfos",  //
-            response = ChannelInfo.class, //
-            responseContainer = "ChannelInfoListResult")  //
+            response = ChannelInfoListResult.class)  //
     public ChannelInfoListResult query( //
             @ApiParam(value = "The ScopeId in which to search results", required = true, defaultValue = DEFAULT_SCOPE_ID) @PathParam("scopeId") ScopeId scopeId, //
             @ApiParam(value = "The ChannelInfoQuery to use to filter results", required = true) ChannelInfoQuery query) throws Exception {
@@ -147,7 +148,8 @@ public class DataChannels extends AbstractKapuaResource {
     @Path("_count")
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    @ApiOperation(value = "Counts the ChannelInfos", //
+    @ApiOperation(nickname = "dataChannelCount",
+            value = "Counts the ChannelInfos", //
             notes = "Counts the ChannelInfos with the given ChannelInfoQuery parameter returning the number of matching ChannelInfos", //
             response = CountResult.class)
     public CountResult count( //
@@ -171,7 +173,8 @@ public class DataChannels extends AbstractKapuaResource {
     @GET
     @Path("{channelInfoId}")
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    @ApiOperation(value = "Gets an ChannelInfo", //
+    @ApiOperation(nickname = "dataChannelFind",
+            value = "Gets an ChannelInfo", //
             notes = "Gets the ChannelInfo specified by the channelInfoId path parameter", //
             response = ChannelInfo.class)
     public ChannelInfo find( //

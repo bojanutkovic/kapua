@@ -44,10 +44,10 @@ public class AccountDetailsView extends LayoutContainer {
 
     protected void onRender(Element parent, int index) {
         super.onRender(parent, index);
-        
+
         setLayout(new FitLayout());
         setBorders(false);
-        
+
         LayoutContainer bodyLayoutContainer = new LayoutContainer();
         bodyLayoutContainer.setBorders(true);
         bodyLayoutContainer.setLayout(new BorderLayout());
@@ -57,7 +57,7 @@ public class AccountDetailsView extends LayoutContainer {
         BorderLayoutData centerMainPanel = new BorderLayoutData(LayoutRegion.CENTER);
         centerMainPanel.setMargins(new Margins(0, 5, 0, 0));
         centerMainPanel.setSplit(false);
-        
+
         TabPanel tabPanel = new TabPanel();
         LayoutContainer resultContainer = new LayoutContainer(new BorderLayout());
         resultContainer.setBorders(false);
@@ -68,8 +68,7 @@ public class AccountDetailsView extends LayoutContainer {
         northData.setSplit(true);
         northData.setMinSize(0);
         resultContainer.add(tabPanel, northData);
-        
-        
+
         tabPanel.setPlain(true);
         tabPanel.setBorders(false);
         tabPanel.setBodyBorder(false);
@@ -81,11 +80,11 @@ public class AccountDetailsView extends LayoutContainer {
         accountDescriptionTab.setAccount(selectedAccount);
         accountDescriptionTab.initTable();
         tabPanel.add(accountDescriptionTab);
-        
+
         bodyLayoutContainer.add(tabPanel, northData);
 
         add(bodyLayoutContainer);
-        
+
     }
 
 }
