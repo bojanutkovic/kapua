@@ -20,6 +20,7 @@ import org.eclipse.kapua.app.console.shared.service.GwtTagServiceAsync;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class TagTabDescription extends EntityDescriptionTabItem<GwtTag> {
@@ -40,5 +41,11 @@ public class TagTabDescription extends EntityDescriptionTabItem<GwtTag> {
 
             }
         };
+    }
+
+    @Override
+    protected void onRender(Element parent, int index) {
+        super.onRender(parent, index);
+        setBorders(false);
     }
 }

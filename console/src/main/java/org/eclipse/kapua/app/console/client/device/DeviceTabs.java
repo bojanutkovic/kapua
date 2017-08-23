@@ -179,7 +179,7 @@ public class DeviceTabs extends LayoutContainer {
         tabsPanel.setStyleAttribute("padding-top", "5px");
 
         tabProfile = new TabItem(MSGS.deviceTabDescription(), new KapuaIcon(IconSet.INFO));
-        tabProfile.setBorders(true);
+        tabProfile.setBorders(false);
         tabProfile.setLayout(new FitLayout());
         tabProfile.add(deviceProfileTab);
         tabProfile.addListener(Events.Select, new Listener<ComponentEvent>() {
@@ -191,7 +191,7 @@ public class DeviceTabs extends LayoutContainer {
         tabsPanel.add(tabProfile);
 
         tabHistory = new TabItem(MSGS.tabHistory(), new KapuaIcon(IconSet.HISTORY));
-        tabHistory.setBorders(true);
+        tabHistory.setBorders(false);
         tabHistory.setLayout(new FitLayout());
         tabHistory.add(deviceHistoryTab);
         tabHistory.addListener(Events.Select, new Listener<ComponentEvent>() {
@@ -203,7 +203,7 @@ public class DeviceTabs extends LayoutContainer {
         tabsPanel.add(tabHistory);
 
         tabPackages = new TabItem(MSGS.tabPackages(), new KapuaIcon(IconSet.INBOX));
-        tabPackages.setBorders(true);
+        tabPackages.setBorders(false);
         tabPackages.setLayout(new FitLayout());
         tabPackages.add(devicePackagesTab);
         tabPackages.addListener(Events.Select, new Listener<ComponentEvent>() {
@@ -215,7 +215,7 @@ public class DeviceTabs extends LayoutContainer {
         tabsPanel.add(tabPackages);
 
         tabBundles = new TabItem(MSGS.tabBundles(), new KapuaIcon(IconSet.CUBES));
-        tabBundles.setBorders(true);
+        tabBundles.setBorders(false);
         tabBundles.setLayout(new FitLayout());
         tabBundles.add(deviceBundlesTab);
         tabBundles.addListener(Events.Select, new Listener<ComponentEvent>() {

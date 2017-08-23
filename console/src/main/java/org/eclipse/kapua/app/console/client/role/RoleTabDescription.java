@@ -20,6 +20,7 @@ import org.eclipse.kapua.app.console.shared.service.GwtRoleServiceAsync;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class RoleTabDescription extends EntityDescriptionTabItem<GwtRole> {
@@ -36,5 +37,11 @@ public class RoleTabDescription extends EntityDescriptionTabItem<GwtRole> {
                 GWT_ROLE_SERVICE.getRoleDescription(selectedEntity.getScopeId(), selectedEntity.getId(), callback);
             }
         };
+    }
+
+    @Override
+    protected void onRender(Element parent, int index) {
+        super.onRender(parent, index);
+        setBorders(false);
     }
 }

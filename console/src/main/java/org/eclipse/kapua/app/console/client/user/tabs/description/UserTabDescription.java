@@ -46,7 +46,7 @@ public class UserTabDescription extends EntityDescriptionTabItem<GwtUser> {
     @Override
     protected void onRender(Element parent, int index) {
         super.onRender(parent, index);
-        setBorders(false);
+        setBorders(true);
     }
 
 }

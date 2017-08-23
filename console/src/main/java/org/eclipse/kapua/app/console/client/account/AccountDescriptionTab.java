@@ -20,6 +20,7 @@ import org.eclipse.kapua.app.console.shared.service.GwtAccountServiceAsync;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class AccountDescriptionTab extends EntityDescriptionTabItem<GwtAccount> {
@@ -35,6 +36,12 @@ public class AccountDescriptionTab extends EntityDescriptionTabItem<GwtAccount> 
                 GWT_ACCOUNT_SERVICE.getAccountInfo(selectedEntity.getId(), callback);
             }
         };
+    }
+
+    @Override
+    protected void onRender(Element parent, int index) {
+        super.onRender(parent, index);
+        setBorders(false);
     }
 
 }
