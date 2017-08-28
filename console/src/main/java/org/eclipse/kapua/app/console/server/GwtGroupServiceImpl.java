@@ -33,6 +33,8 @@ import org.eclipse.kapua.service.authorization.group.GroupFactory;
 import org.eclipse.kapua.service.authorization.group.GroupListResult;
 import org.eclipse.kapua.service.authorization.group.GroupQuery;
 import org.eclipse.kapua.service.authorization.group.GroupService;
+import org.eclipse.kapua.service.user.User;
+import org.eclipse.kapua.service.user.UserService;
 
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
@@ -114,6 +116,7 @@ public class GwtGroupServiceImpl extends KapuaConfigurableRemoteServiceServlet<G
         try {
             KapuaLocator locator = KapuaLocator.getInstance();
             GroupService groupService = locator.getService(GroupService.class);
+            UserService userService = locator.getService(UserService.class);
             GroupQuery groupQuery = GwtKapuaModelConverter.convertGroupQuery(loadConfig,
                     gwtGroupQuery);
             GroupListResult groups = groupService.query(groupQuery);
@@ -126,6 +129,12 @@ public class GwtGroupServiceImpl extends KapuaConfigurableRemoteServiceServlet<G
                 }
                 for (Group g : groups.getItems()) {
                     gwtGroupList.add(KapuaGwtModelConverter.convert(g));
+                    for (GwtGroup gwtGroup : gwtGroupList) {
+                        User user = userService.find(g.getScopeId(), g.getCreatedBy());
+                        if (user != null) {
+                            gwtGroup.setUserName(user.getDisplayName());
+                        }
+                    }
                 }
             }
         } catch (Exception e) {
@@ -157,9 +166,11 @@ public class GwtGroupServiceImpl extends KapuaConfigurableRemoteServiceServlet<G
         try {
             KapuaLocator locator = KapuaLocator.getInstance();
             GroupService groupService = locator.getService(GroupService.class);
+            UserService userService = locator.getService(UserService.class);
             KapuaId scopeId = KapuaEid.parseCompactId(scopeShortId);
             KapuaId groupId = KapuaEid.parseCompactId(groupShortId);
             Group group = groupService.find(scopeId, groupId);
+            User user = userService.find(scopeId, group.getCreatedBy());
 
             if (group != null) {
                 // gwtGroupDescription.add(new GwtGroupedNVPair("Entity", "Scope
@@ -169,11 +180,11 @@ public class GwtGroupServiceImpl extends KapuaConfigurableRemoteServiceServlet<G
                 gwtGroupDescription.add(new GwtGroupedNVPair("entityInfo", "accessGroupModifiedOn",
                         group.getModifiedOn().toString()));
                 gwtGroupDescription.add(new GwtGroupedNVPair("entityInfo", "accessGroupModifiedBy",
-                        group.getModifiedBy().toCompactId()));
+                        user.getDisplayName()));
                 gwtGroupDescription.add(new GwtGroupedNVPair("entityInfo", "accessGroupCreatedOn",
                         group.getCreatedOn().toString()));
                 gwtGroupDescription.add(new GwtGroupedNVPair("entityInfo", "accessGroupCreatedBy",
-                        group.getCreatedBy().toCompactId()));
+                        user.getDisplayName()));
 
             }
         } catch (Exception e) {

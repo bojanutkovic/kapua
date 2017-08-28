@@ -140,7 +140,7 @@ private static final ConsoleMessages MSGS = GWT.create(ConsoleMessages.class);
         grid.setStripeRows(true);
         grid.setTrackMouseOver(false);
         grid.disableTextSelection(false);
-
+        updateAccountInfo();
         add(grid);
     }
 
@@ -180,7 +180,7 @@ private static final ConsoleMessages MSGS = GWT.create(ConsoleMessages.class);
                   }
               }
           });
-          editButton.setEnabled(false);
+          editButton.setEnabled(true);
 
           accountsToolBar.add(editButton);
           accountsToolBar.add(new SeparatorToolItem());

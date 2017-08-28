@@ -28,4 +28,12 @@ public class GwtGroup extends GwtUpdatableEntityModel {
     public String toString() {
         return getGroupName();
     }
+
+    public String getUserName() {
+        return get("userName");
+    }
+
+    public void setUserName(String userName) {
+        set("userName", userName);
+    }
 }

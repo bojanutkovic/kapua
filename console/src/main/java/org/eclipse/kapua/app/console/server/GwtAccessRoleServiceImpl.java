@@ -32,6 +32,8 @@ import org.eclipse.kapua.service.authorization.access.AccessRoleListResult;
 import org.eclipse.kapua.service.authorization.access.AccessRoleService;
 import org.eclipse.kapua.service.authorization.role.Role;
 import org.eclipse.kapua.service.authorization.role.RoleService;
+import org.eclipse.kapua.service.user.User;
+import org.eclipse.kapua.service.user.UserService;
 
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
@@ -107,6 +109,7 @@ public class GwtAccessRoleServiceImpl extends KapuaRemoteServiceServlet implemen
                 RoleService roleService = locator.getService(RoleService.class);
                 AccessInfoService accessInfoService = locator.getService(AccessInfoService.class);
                 AccessRoleService accessRoleService = locator.getService(AccessRoleService.class);
+                UserService userService = locator.getService(UserService.class);
 
                 KapuaId scopeId = GwtKapuaModelConverter.convert(scopeShortId);
                 KapuaId userId = GwtKapuaModelConverter.convert(userShortId);
@@ -118,8 +121,12 @@ public class GwtAccessRoleServiceImpl extends KapuaRemoteServiceServlet implemen
 
                     for (AccessRole accessRole : accessRoleList.getItems()) {
                         Role role = roleService.find(scopeId, accessRole.getRoleId());
+                        User user = userService.find(scopeId, userId);
                         GwtAccessRole gwtAccessRole = KapuaGwtModelConverter.convert(role, accessRole);
                         gwtAccessRoles.add(gwtAccessRole);
+                        for (GwtAccessRole gwtAccessRole2 : gwtAccessRoles) {
+                            gwtAccessRole2.setUserName(user.getDisplayName());
+                        }
                     }
                 }
             } catch (Throwable t) {
