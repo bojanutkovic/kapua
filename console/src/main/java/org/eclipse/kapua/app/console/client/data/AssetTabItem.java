@@ -22,7 +22,6 @@ import org.eclipse.kapua.app.console.shared.model.GwtDatastoreAsset;
 import org.eclipse.kapua.app.console.shared.model.GwtDatastoreDevice;
 import org.eclipse.kapua.app.console.shared.model.GwtHeader;
 import org.eclipse.kapua.app.console.shared.model.GwtSession;
-
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
@@ -38,7 +37,10 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.layout.TableData;
 import com.extjs.gxt.ui.client.widget.layout.TableLayout;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
 
 public class AssetTabItem extends TabItem {
 
@@ -68,7 +70,7 @@ public class AssetTabItem extends TabItem {
 
         setWidth("100%");
 
-        BorderLayoutData messageLayout = new BorderLayoutData(LayoutRegion.NORTH, 0.02f);
+        final BorderLayoutData messageLayout = new BorderLayoutData(LayoutRegion.NORTH, 0.02f);
         messageLayout.setMargins(new Margins(5));
         Text welcomeMessage = new Text();
         welcomeMessage.setText(MSGS.assetTabItemMessage());
@@ -176,6 +178,31 @@ public class AssetTabItem extends TabItem {
         resultsTableTabItem.setLayout(new FitLayout());
         resultsTableTabItem.add(resultsTable);
         resultsTabPanel.add(resultsTableTabItem);
+
+        Window.addResizeHandler(new ResizeHandler() {
+
+            @Override
+            public void onResize(ResizeEvent arg0) {
+                float width = arg0.getWidth();
+                if(width <= 300 && width > 150) {
+                    messageLayout.setMargins(new Margins(5, 5, 300, 5));
+                } else if(width <= 400 && width > 300) {
+                    messageLayout.setMargins(new Margins(5, 5, 150, 5));
+                } else if(width <= 450 && width > 400) {
+                    messageLayout.setMargins(new Margins(5, 5, 90, 5));
+                } else if(width <= 500 && width > 450) {
+                    messageLayout.setMargins(new Margins(5, 5, 70, 5));
+                } else if(width <= 650 && width > 500) {
+                    messageLayout.setMargins(new Margins(5, 5, 50, 5));
+                } else if(width <= 900 && width > 650) {
+                    messageLayout.setMargins(new Margins(5, 5, 30, 5));
+                } else if(width < 1400 && width >900) {
+                    messageLayout.setMargins(new Margins(5, 5, 20, 5));
+                } else if(width >= 1400) {
+                    messageLayout.setMargins(new Margins(5, 5, 5, 5));
+                }
+            }
+        });
 
         add(resultsTabPanel, resultsLayout);
     }

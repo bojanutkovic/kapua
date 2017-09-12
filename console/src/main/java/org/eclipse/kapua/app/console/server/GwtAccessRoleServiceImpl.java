@@ -135,4 +135,54 @@ public class GwtAccessRoleServiceImpl extends KapuaRemoteServiceServlet implemen
         }
         return new BasePagingLoadResult<GwtAccessRole>(gwtAccessRoles, 0, gwtAccessRoles.size());
     }
+
+    @Override
+    public GwtAccessRole createCheck(GwtXSRFToken xsrfToken, String accessRoleShortId, String userShortId, List<GwtAccessRoleCreator> listApp) throws GwtKapuaException {
+        checkXSRFToken(xsrfToken);
+        GwtAccessRole gwtAccessRole = null;
+        try {
+            KapuaLocator locator = KapuaLocator.getInstance();
+            KapuaId scopeId = GwtKapuaModelConverter.convert(accessRoleShortId);
+            KapuaId userId = GwtKapuaModelConverter.convert(userShortId);
+            AccessRoleService accessRoleService = locator.getService(AccessRoleService.class);
+            AccessInfoService accessInfoService = locator.getService(AccessInfoService.class);
+            AccessInfo accessInfo = accessInfoService.findByUserId(scopeId, userId);
+            AccessRoleListResult listDB = accessRoleService.findByAccessInfoId(scopeId, accessInfo.getId());
+            ArrayList<KapuaId> list = new ArrayList<KapuaId>();
+            ArrayList<KapuaId> listAppId = new ArrayList<KapuaId>();
+            for (AccessRole accessRole : listDB.getItems()) {
+                list.add(accessRole.getRoleId());
+            }
+            for (GwtAccessRoleCreator gwtAccessRoleCreator : listApp) {
+                KapuaId kapuaId = GwtKapuaModelConverter.convert(gwtAccessRoleCreator.getRoleId());
+                listAppId.add(kapuaId);
+            }
+            for (GwtAccessRoleCreator gwtAccessRoleCreator : listApp) {
+                if (!list.contains(GwtKapuaModelConverter.convert(gwtAccessRoleCreator.getRoleId()))) {
+                    AccessRoleCreator roleCreator = GwtKapuaModelConverter.convert(gwtAccessRoleCreator);
+                    AccessRole newAccessRole = accessRoleService.create(roleCreator);
+                    gwtAccessRole = KapuaGwtModelConverter.convert(newAccessRole);
+                }
+            }
+            for (KapuaId accessRoleId : list) {
+                if (!listAppId.contains(accessRoleId)) {
+                    accessRoleService.delete(scopeId, getIdByRoleId(accessRoleId, listDB));
+                }
+            }
+        } catch (Throwable t) {
+            KapuaExceptionHandler.handle(t);
+        }
+        return gwtAccessRole;
+    }
+
+    public KapuaId getIdByRoleId(KapuaId accessRoleId, AccessRoleListResult listDB) {
+        KapuaId returnId = null;
+        for (AccessRole accessRole : listDB.getItems()) {
+            if (accessRole.getRoleId().equals(accessRoleId)) {
+                returnId = accessRole.getId();
+                break;
+            }
+        }
+        return returnId;
+    }
 }
