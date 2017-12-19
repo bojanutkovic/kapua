@@ -127,6 +127,13 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
 
             // create the Account
             AccountService accountService = locator.getService(AccountService.class);
+            AccountQuery query = accountFactory.newQuery(parentAccountId);
+            AccountListResult list = accountService.query(query);
+            for (Account account : list.getItems()) {
+                if (account.getName().equals(gwtAccountCreator.getAccountName())) {
+                    throw new KapuaDuplicateNameException(gwtAccountCreator.getAccountName());
+                }
+            }
             Account account = accountService.create(accountCreator);
 
             // convertKapuaId to GwtAccount and return
