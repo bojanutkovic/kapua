@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2018 Eurotech and/or its affiliates and others
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -127,13 +127,6 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
 
             // create the Account
             AccountService accountService = locator.getService(AccountService.class);
-            AccountQuery query = accountFactory.newQuery(parentAccountId);
-            AccountListResult list = accountService.query(query);
-            for (Account account : list.getItems()) {
-                if (account.getName().equals(gwtAccountCreator.getAccountName())) {
-                    throw new KapuaDuplicateNameException(gwtAccountCreator.getAccountName());
-                }
-            }
             Account account = accountService.create(accountCreator);
 
             // convertKapuaId to GwtAccount and return
