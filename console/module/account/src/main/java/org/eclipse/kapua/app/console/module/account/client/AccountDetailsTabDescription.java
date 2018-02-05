@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2018 Eurotech and/or its affiliates and others
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -71,7 +71,7 @@ public class AccountDetailsTabDescription extends KapuaTabItem<GwtAccount> {
     private ToolBar accountsToolBar;
 
     public AccountDetailsTabDescription(GwtSession currentSession, AccountDetailsView accoountDetailsView, AccountView centerAccountView) {
-        super(currentSession, MSGS.entityTabDescriptionTitle(), new KapuaIcon(IconSet.INFO));
+        super(currentSession, MSGS.settingsDescriptionTitle(), new KapuaIcon(IconSet.INFO));
         this.accoountDetailsView = accoountDetailsView;
         this.centerAccountView = centerAccountView;
 
