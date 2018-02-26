@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.access.shiro;
 
+import org.eclipse.kapua.KapuaDuplicateNameException;
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.query.predicate.AttributePredicate;
@@ -79,6 +80,12 @@ public class AccessRoleServiceImpl extends AbstractKapuaService implements Acces
             //
             // Check that role exists
             Role role = RoleDAO.find(em, accessRoleCreator.getRoleId());
+            AccessRoleListResult accessRoles = findByAccessInfoId(accessRoleCreator.getScopeId(), accessRoleCreator.getAccessInfoId());
+            for (int i = 0; i < accessRoles.getSize(); i++) {
+                if(accessRoles.getItem(i).getRoleId().equals(role.getId())) {
+                    throw new KapuaDuplicateNameException(role.getName());
+                }
+            }
 
             if (role == null) {
                 throw new KapuaEntityNotFoundException(Role.TYPE, accessRoleCreator.getRoleId());
