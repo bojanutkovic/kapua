@@ -38,6 +38,7 @@ public class AccountGrid extends EntityGrid<GwtAccount> {
     private static final ConsoleAccountMessages ACCOUNT_MSGS = GWT.create(ConsoleAccountMessages.class);
 
     private final GwtAccountServiceAsync gwtAccountService = GWT.create(GwtAccountService.class);
+    private boolean isFirstTime = super.refreshOnRender;
 
     private GwtAccountQuery filterQuery;
     private AccountGridToolbar toolbar;
@@ -47,6 +48,17 @@ public class AccountGrid extends EntityGrid<GwtAccount> {
         filterQuery = new GwtAccountQuery();
         filterQuery.setScopeId(currentSession.getSelectedAccountId());
 
+    }
+
+    @Override
+    public void refresh() {
+        if(isFirstTime) {
+            toolbar.getRefreshEntityButton().enable();
+            isFirstTime = false;
+        } else {
+            toolbar.getRefreshEntityButton().disable();
+        }
+        super.refresh();
     }
 
     @Override
@@ -69,8 +81,20 @@ public class AccountGrid extends EntityGrid<GwtAccount> {
         return new RpcProxy<PagingLoadResult<GwtAccount>>() {
 
             @Override
-            protected void load(Object loadConfig, AsyncCallback<PagingLoadResult<GwtAccount>> callback) {
+            protected void load(Object loadConfig, final AsyncCallback<PagingLoadResult<GwtAccount>> callback) {
                 gwtAccountService.query((PagingLoadConfig) loadConfig, filterQuery, callback);
+
+                gwtAccountService.query((PagingLoadConfig) loadConfig, filterQuery, new AsyncCallback<PagingLoadResult<GwtAccount>>() {
+                    @Override
+                    public void onFailure(Throwable arg0) {
+                        toolbar.getRefreshEntityButton().enable();
+                    }
+
+                    @Override
+                    public void onSuccess(PagingLoadResult<GwtAccount> arg0) {
+                        toolbar.getRefreshEntityButton().enable();
+                    }
+                });
             }
         };
     }
